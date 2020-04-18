@@ -48,7 +48,6 @@ namespace SpeedCardGame
         public class userField{
             public List<fieldPile> piles;
             public int playerSelectedFieldPile;
-            
             public bool fieldEmpty;//needed
         }
 
@@ -131,38 +130,54 @@ namespace SpeedCardGame
                 pile.nameOfLinkedPile =  $"playerFieldPile{i}";    
                 mainPlayer.field.piles.Add(pile);
             }
-            updateVisualPilesAll();
             mainPlayer.field.playerSelectedFieldPile = 0;
             UpdateFieldCards("selectedFieldChanged");
             mainPlayer.playPile.playerSelectedPlayPile = 1;
             UpdateFieldCards("selectedPlayChanged");
-            mainPlayer.field.fieldEmpty = false;//change??
+            mainPlayer.field.fieldEmpty = false;
+            mainPlayer.playPile.playerPlayPile = new List<String> { };
+            moveCard(mainPlayer.cardsInDeck, mainPlayer.playPile.playerPlayPile, "first");
             Grid.FocusVisualSecondaryBrushProperty.Equals( "#FF297837");
+            updateVisualPilesAll();
         }
         public void updateVisualPilesAll()
         {
-            foreach (var set in mainPlayer.field.piles)
+            if (mainPlayer.field.piles != null)
             {
-                switch (set.nameOfLinkedPile)
+                foreach (var set in mainPlayer.field.piles)
                 {
-                    //don't know how to dynamicaly call elements
-                    // don't know a way to convert string to Windows.UI.Xaml.Controls.Image/ dynamic calling of images
-                    case ("playerFieldPile1"):
-                        playerFieldPile1.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
-                        break;
-                    case ("playerFieldPile2"):
-                        playerFieldPile2.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
-                        break;
-                    case ("playerFieldPile3"):
-                        playerFieldPile3.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
-                        break;
-                    case ("playerFieldPile4"):
-                        playerFieldPile4.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
-                        break;
-                    case ("playerFieldPile5"):
-                        playerFieldPile5.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
-                        break;
+                    if (set.pileCards.Count != 0)
+                    {
+                        set.topCard = set.pileCards[0];
+                    }
+                    else
+                    {
+                        set.topCard = "Card_back";
+                    }
+                    switch (set.nameOfLinkedPile)
+                    {
+                        //don't know how to dynamicaly call elements
+                        // don't know a way to convert string to Windows.UI.Xaml.Controls.Image/ dynamic calling of images
+                        case ("playerFieldPile1"):
+                            playerFieldPile1.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
+                            break;
+                        case ("playerFieldPile2"):
+                            playerFieldPile2.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
+                            break;
+                        case ("playerFieldPile3"):
+                            playerFieldPile3.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
+                            break;
+                        case ("playerFieldPile4"):
+                            playerFieldPile4.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
+                            break;
+                        case ("playerFieldPile5"):
+                            playerFieldPile5.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
+                            break;
+                    }
                 }
+            }
+            if (mainPlayer.playPile.playerPlayPile != null) {
+                playerPlayPile.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{mainPlayer.playPile.playerPlayPile[mainPlayer.playPile.playerPlayPile.Count-1]}.png"));//add special case for round win event
             }
         }
         public void UpdateFieldCards(String sendingOpperation)
