@@ -12,6 +12,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 
@@ -22,7 +23,7 @@ namespace SpeedCardGame
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MainPage : Page
+    public sealed partial class MainPage : Page 
     {
         //global variables
         Player mainPlayer = new Player();
@@ -35,13 +36,19 @@ namespace SpeedCardGame
         {
             public String Name;
             public userField field;
+            public userPlay playPile;
             public List<String> cardsInDeck;
+        }
 
+        public class userPlay
+        {
+            public int playerSelectedPlayPile;
+            public List<String> playerPlayPile;
         }
         public class userField{
             public List<fieldPile> piles;
             public int playerSelectedFieldPile;
-            public int playerSelectedPlayPile;//move
+            
             public bool fieldEmpty;//needed
         }
 
@@ -84,9 +91,12 @@ namespace SpeedCardGame
                 from.Remove(moveCard);
             }
         }
+
         public void setUpGame()
         {
             mainPlayer.field = new userField();
+            mainPlayer.cardsInDeck = new List<string> { };
+            mainPlayer.playPile = new userPlay();
             //intialise deck
             foreach (string suit in suits)
             {
@@ -105,7 +115,6 @@ namespace SpeedCardGame
             }
             deckCards = shuffle(deckCards);
             //basic intialisation of class add more when random cards in deck implimetnted
-            mainPlayer.cardsInDeck = new List<string> { };
             for (int dealCard = Convert.ToInt32(Math.Floor(Convert.ToDecimal(deckCards.Count / 2))); dealCard > 0; dealCard--)
             {
                 moveCard(deckCards,mainPlayer.cardsInDeck,"random");
@@ -122,14 +131,40 @@ namespace SpeedCardGame
                 pile.nameOfLinkedPile =  $"playerFieldPile{i}";    
                 mainPlayer.field.piles.Add(pile);
             }
+            updateVisualPilesAll();
             mainPlayer.field.playerSelectedFieldPile = 0;
             UpdateFieldCards("selectedFieldChanged");
-            mainPlayer.field.playerSelectedPlayPile = 1;
+            mainPlayer.playPile.playerSelectedPlayPile = 1;
             UpdateFieldCards("selectedPlayChanged");
             mainPlayer.field.fieldEmpty = false;//change??
             Grid.FocusVisualSecondaryBrushProperty.Equals( "#FF297837");
         }
-
+        public void updateVisualPilesAll()
+        {
+            foreach (var set in mainPlayer.field.piles)
+            {
+                switch (set.nameOfLinkedPile)
+                {
+                    //don't know how to dynamicaly call elements
+                    // don't know a way to convert string to Windows.UI.Xaml.Controls.Image/ dynamic calling of images
+                    case ("playerFieldPile1"):
+                        playerFieldPile1.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
+                        break;
+                    case ("playerFieldPile2"):
+                        playerFieldPile2.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
+                        break;
+                    case ("playerFieldPile3"):
+                        playerFieldPile3.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
+                        break;
+                    case ("playerFieldPile4"):
+                        playerFieldPile4.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
+                        break;
+                    case ("playerFieldPile5"):
+                        playerFieldPile5.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
+                        break;
+                }
+            }
+        }
         public void UpdateFieldCards(String sendingOpperation)
         {
             //update selected
@@ -167,7 +202,7 @@ namespace SpeedCardGame
             }
             if (sendingOpperation == "selectedPlayChanged")
             {
-                switch (mainPlayer.field.playerSelectedPlayPile)
+                switch (mainPlayer.playPile.playerSelectedPlayPile)
                 {
                     case (0):
                         playerPlayPile.Margin = baseMarginSetupCards;
@@ -193,8 +228,8 @@ namespace SpeedCardGame
 
         private void KeyPressed(object sender, KeyRoutedEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine(e.Key);
-            System.Diagnostics.Debug.WriteLine(sender);
+            //System.Diagnostics.Debug.WriteLine(e.Key);
+            //System.Diagnostics.Debug.WriteLine(sender);
             if (Convert.ToString(e.Key) == "A"|| Convert.ToString(e.Key) == "Left")
             {
                 if (mainPlayer.field.playerSelectedFieldPile != 0)
@@ -213,17 +248,17 @@ namespace SpeedCardGame
             }
             else if (Convert.ToString(e.Key) == "W" || Convert.ToString(e.Key) == "Up")
             {
-                if (mainPlayer.field.playerSelectedPlayPile != 1)
+                if (mainPlayer.playPile.playerSelectedPlayPile != 1)
                 {
-                    mainPlayer.field.playerSelectedPlayPile++;
+                    mainPlayer.playPile.playerSelectedPlayPile++;
                     UpdateFieldCards("selectedPlayChanged");
                 }
             }
             else if (Convert.ToString(e.Key) == "S" || Convert.ToString(e.Key) == "Down")
             {
-                if (mainPlayer.field.playerSelectedPlayPile != 0)
+                if (mainPlayer.playPile.playerSelectedPlayPile != 0)
                 {
-                    mainPlayer.field.playerSelectedPlayPile--;
+                    mainPlayer.playPile.playerSelectedPlayPile--;
                     UpdateFieldCards("selectedPlayChanged");
                 }
             }
