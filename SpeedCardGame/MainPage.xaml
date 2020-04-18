@@ -1,0 +1,44 @@
+﻿<Page
+    x:Class="SpeedCardGame.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SpeedCardGame"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="#FF1A6026">
+
+    <Grid KeyDown="KeyPressed">
+        <Image x:Name="playerFieldPile1" Grid.Column="2" Grid.Row="2" Source="ms-appx:///Assets/Card_back.png" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="10,0,10,20" ></Image>
+        <Image x:Name="playerFieldPile2" Grid.Column="3" Grid.Row="2" Source="ms-appx:///Assets/Card_back.png" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="10,0,10,20" ></Image>
+        <Image x:Name="playerFieldPile3" Grid.Column="4" Grid.Row="2" Source="ms-appx:///Assets/Card_back.png" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="10,0,10,20" ></Image>
+        <Image x:Name="playerFieldPile4" Grid.Column="5" Grid.Row="2" Source="ms-appx:///Assets/Card_back.png" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="10,0,10,20" ></Image>
+        <Image x:Name="playerFieldPile5" Grid.Column="6" Grid.Row="2" Source="ms-appx:///Assets/Card_back.png" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="10,0,10,20" ></Image>
+        <Image x:Name="compFieldPile1" Grid.Column="2" Grid.Row="0" Source="ms-appx:///Assets/Card_back.png" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="10,0,10,20" ></Image>
+        <Image x:Name="compFieldPile2" Grid.Column="3" Grid.Row="0" Source="ms-appx:///Assets/Card_back.png" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="10,0,10,20" ></Image>
+        <Image x:Name="compFieldPile3" Grid.Column="4" Grid.Row="0" Source="ms-appx:///Assets/Card_back.png" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="10,0,10,20" ></Image>
+        <Image x:Name="compFieldPile4" Grid.Column="5" Grid.Row="0" Source="ms-appx:///Assets/Card_back.png" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="10,0,10,20" ></Image>
+        <Image x:Name="compFieldPile5" Grid.Column="6" Grid.Row="0" Source="ms-appx:///Assets/Card_back.png" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="10,0,10,20" ></Image>
+        <Image x:Name="playerHandPile" Grid.Column="7" Grid.Row="1" Source="ms-appx:///Assets/Card_back.png" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="10,0,10,20" ></Image>
+        <Image x:Name="compHandPile" Grid.Column="1" Grid.Row="1" Source="ms-appx:///Assets/Card_back.png" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="10,0,10,20" ></Image>
+        <Image x:Name="playerPlayPile" Grid.Column="5" Grid.Row="1" Source="ms-appx:///Assets/Card_back.png" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0,10,20" ></Image>
+        <Image x:Name="compPlayPile" Grid.Column="3" Grid.Row="1" Source="ms-appx:///Assets/Card_back.png" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0,10,20" ></Image>
+        <Button x:Name="KeyActivatior" Opacity="0" />
+        <Grid.RowDefinitions>
+            <RowDefinition x:Name="compSide" Height="3*"/>
+            <RowDefinition x:Name="Field" Height="5*"/>
+            <RowDefinition x:Name="playerSide" Height="5*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="7*"/>
+            <ColumnDefinition Width="7*"/>
+            <ColumnDefinition Width="7*"/>
+            <ColumnDefinition Width="7*"/>
+            <ColumnDefinition Width="7*"/>
+            <ColumnDefinition Width="7*"/>
+            <ColumnDefinition Width="7*"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+    </Grid>
+</Page>
