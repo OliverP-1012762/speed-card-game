@@ -71,26 +71,51 @@ namespace SpeedCardGame
             return outList;
         }
 
-        public void moveCard(List<String> from, List<String> moveTo, String whatMoved)
+        public void moveCard(List<String> from, List<String> moveTo, String whatMoved, String whereMove)
         {
-            if (whatMoved == "random")
+            if (whereMove == "")
             {
-                var moveCard = from[rand.Next(0, from.Count)];
-                moveTo.Add(moveCard);
-                from.Remove(moveCard);
+                if (whatMoved == "random")
+                {
+                    var moveCard = from[rand.Next(0, from.Count)];
+                    moveTo.Add(moveCard);
+                    from.Remove(moveCard);
+                }
+                else if (whatMoved == "first")
+                {
+                    var moveCard = from[0];
+                    moveTo.Add(moveCard);
+                    from.Remove(moveCard);
+                }
+                else if (whatMoved == "last")
+                {
+                    var moveCard = from[from.Count];
+                    moveTo.Add(moveCard);
+                    from.Remove(moveCard);
+                }
             }
-            else if (whatMoved == "first")
+            else if(whereMove == "front")
             {
-                var moveCard = from[0];
-                moveTo.Add(moveCard);
-                from.Remove(moveCard);
+                if (whatMoved == "random")
+                {
+                    var moveCard = from[rand.Next(0, from.Count)];
+                    moveTo.Insert(0,moveCard);
+                    from.Remove(moveCard);
+                }
+                else if (whatMoved == "first")
+                {
+                    var moveCard = from[0];
+                    moveTo.Insert(0, moveCard);
+                    from.Remove(moveCard);
+                }
+                else if (whatMoved == "last")
+                {
+                    var moveCard = from[from.Count];
+                    moveTo.Insert(0, moveCard);
+                    from.Remove(moveCard);
+                }
             }
-            else if (whatMoved == "last")
-            {
-                var moveCard = from[from.Count];
-                moveTo.Add(moveCard);
-                from.Remove(moveCard);
-            }
+            updateVisualPilesAll();
         }
         public void setUpGame()
         {
@@ -130,7 +155,7 @@ namespace SpeedCardGame
                     //basic intialisation of class add more when random cards in deck implimetnted
                     for (int dealCard = Convert.ToInt32(Math.Floor(Convert.ToDecimal(CardsToEachPlayer))); dealCard > 0; dealCard--)
                     {
-                        moveCard(deckCards, playersToSetUp.cardsInDeck, "random");
+                        moveCard(deckCards, playersToSetUp.cardsInDeck, "random","");
                     }
                     playersToSetUp.field.piles = new List<fieldPile> { };
                     for (int i = 1; i < 6; i++)
@@ -139,7 +164,7 @@ namespace SpeedCardGame
                         pile.pileCards = new List<string> { };
                         for (int j = i; j > 0; j--)
                         {
-                            moveCard(playersToSetUp.cardsInDeck, pile.pileCards, "first");
+                            moveCard(playersToSetUp.cardsInDeck, pile.pileCards, "first","");
                         }
                         pile.topCard = pile.pileCards[0];
                         pile.nameOfLinkedPile = $"{playersToSetUp.Name}FieldPile{i}";
@@ -153,7 +178,7 @@ namespace SpeedCardGame
                     playersToSetUp.field.fieldEmpty = false;
                     playersToSetUp.playPile.playerPlayPile = new List<String> { };
                     
-                    //move to round start moveCard(playersToSetUp.cardsInDeck, playersToSetUp.playPile.playerPlayPile, "first");
+                    //move to round start moveCard(playersToSetUp.cardsInDeck, playersToSetUp.playPile.playerPlayPile, "first","");
 
                 }
                 Grid.FocusVisualSecondaryBrushProperty.Equals("#FF297837");
@@ -172,16 +197,16 @@ namespace SpeedCardGame
             {
                 if (players[0].cardsInDeck.Count == 0) 
                 {
-                    moveCard(players[1].cardsInDeck, players[1].playPile.playerPlayPile, "first");
+                    moveCard(players[1].cardsInDeck, players[1].playPile.playerPlayPile, "first","");
                 }
                 else if (players[1].cardsInDeck.Count == 0)
                 {
-                    moveCard(players[0].cardsInDeck, players[0].playPile.playerPlayPile, "first");
+                    moveCard(players[0].cardsInDeck, players[0].playPile.playerPlayPile, "first", "");
                 }
                 else
                 {
-                    moveCard(players[1].cardsInDeck, players[1].playPile.playerPlayPile, "first");
-                    moveCard(players[0].cardsInDeck, players[0].playPile.playerPlayPile, "first");
+                    moveCard(players[1].cardsInDeck, players[1].playPile.playerPlayPile, "first", "");
+                    moveCard(players[0].cardsInDeck, players[0].playPile.playerPlayPile, "first", "");
                 }
             }
             else
@@ -197,69 +222,78 @@ namespace SpeedCardGame
             foreach (var playersToUpdate in players)
             {
                 //field piles
-                if (playersToUpdate.field.piles != null)
+                if (playersToUpdate.field != null)
                 {
-                    foreach (var set in playersToUpdate.field.piles)
+                    if (playersToUpdate.field.piles != null)
                     {
-                        if (set.pileCards.Count != 0)
+                        foreach (var set in playersToUpdate.field.piles)
                         {
-                            set.topCard = set.pileCards[0];
-                        }
-                        else
-                        {
-                            set.topCard = "Card_back";
-                        }
-                        switch (set.nameOfLinkedPile)
-                        {
-                            //don't know how to dynamicaly call elements
-                            // don't know a way to convert string to Windows.UI.Xaml.Controls.Image/ dynamic calling of images
-                            case ("playerFieldPile1"):
-                                playerFieldPile1.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
-                                break;
-                            case ("playerFieldPile2"):
-                                playerFieldPile2.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
-                                break;
-                            case ("playerFieldPile3"):
-                                playerFieldPile3.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
-                                break;
-                            case ("playerFieldPile4"):
-                                playerFieldPile4.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
-                                break;
-                            case ("playerFieldPile5"):
-                                playerFieldPile5.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
-                                break;
-                            case ("compFieldPile1"):
-                                compFieldPile1.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
-                                break;
-                            case ("compFieldPile2"):
-                                compFieldPile2.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
-                                break;
-                            case ("compFieldPile3"):
-                                compFieldPile3.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
-                                break;
-                            case ("compFieldPile4"):
-                                compFieldPile4.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
-                                break;
-                            case ("compFieldPile5"):
-                                compFieldPile5.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
-                                break;
+                            if (set.pileCards.Count != 0)
+                            {
+                                set.topCard = set.pileCards[0];
+                            }
+                            else
+                            {
+                                set.topCard = "Card_back";
+                            }
+                            switch (set.nameOfLinkedPile)
+                            {
+                                //don't know how to dynamicaly call elements
+                                // don't know a way to convert string to Windows.UI.Xaml.Controls.Image/ dynamic calling of images
+                                case ("playerFieldPile1"):
+                                    playerFieldPile1.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
+                                    break;
+                                case ("playerFieldPile2"):
+                                    playerFieldPile2.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
+                                    break;
+                                case ("playerFieldPile3"):
+                                    playerFieldPile3.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
+                                    break;
+                                case ("playerFieldPile4"):
+                                    playerFieldPile4.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
+                                    break;
+                                case ("playerFieldPile5"):
+                                    playerFieldPile5.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
+                                    break;
+                                case ("compFieldPile1"):
+                                    compFieldPile1.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
+                                    break;
+                                case ("compFieldPile2"):
+                                    compFieldPile2.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
+                                    break;
+                                case ("compFieldPile3"):
+                                    compFieldPile3.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
+                                    break;
+                                case ("compFieldPile4"):
+                                    compFieldPile4.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
+                                    break;
+                                case ("compFieldPile5"):
+                                    compFieldPile5.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
+                                    break;
+                            }
                         }
                     }
                 }
 
                 //play piles
-                if (playersToUpdate.playPile.playerPlayPile.Count != 0)
+                if (playersToUpdate.playPile != null)
                 {
-                    System.Diagnostics.Debug.WriteLine(playersToUpdate.playPile.nameOfLinkedPlayPile);
-                    switch (playersToUpdate.playPile.nameOfLinkedPlayPile)
+                    if (playersToUpdate.playPile.playerPlayPile != null)
                     {
-                        //add special case for round win event
-                        case ("compPlayPile"):
-                            compPlayPile.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{playersToUpdate.playPile.playerPlayPile[playersToUpdate.playPile.playerPlayPile.Count - 1]}.png"));
-                            break;
-                        case ("playerPlayPile"):
-                            playerPlayPile.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{playersToUpdate.playPile.playerPlayPile[playersToUpdate.playPile.playerPlayPile.Count - 1]}.png"));
-                            break;
+                        if (playersToUpdate.playPile.playerPlayPile.Count != 0)
+                        {
+                            System.Diagnostics.Debug.WriteLine(playersToUpdate.playPile.nameOfLinkedPlayPile);
+                            switch (playersToUpdate.playPile.nameOfLinkedPlayPile)
+                            {
+                                //add special case for round win event
+                                case ("compPlayPile"):
+                                    compPlayPile.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{playersToUpdate.playPile.playerPlayPile[playersToUpdate.playPile.playerPlayPile.Count - 1]}.png"));
+                                    break;
+                                case ("playerPlayPile"):
+                                    playerPlayPile.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{playersToUpdate.playPile.playerPlayPile[playersToUpdate.playPile.playerPlayPile.Count - 1]}.png"));
+                                    break;
+                            }
+                        }
                     }
                 }
             }
@@ -374,24 +408,34 @@ namespace SpeedCardGame
 
         private void spacePressed(object sender, RoutedEventArgs e)
         {
+            //activates game
             if (gameStatus == "set Up")
             {
                 gameStatus = "round Start";
                 flipPP();
             }
+            //comparing system
             else if (gameStatus == "round Start")
             {
-                var topCardFieldValue = Convert.ToInt32((players[0].field.piles[players[0].field.playerSelectedFieldPile].topCard).Substring((players[0].field.piles[players[0].field.playerSelectedFieldPile].topCard).Length - 2));
-                var topCardPlayValue = Convert.ToInt32((players[Convert.ToInt32(1-players[0].playPile.playerSelectedPlayPile)].playPile.playerPlayPile[players[0].playPile.playerPlayPile.Count - 1]).Substring((players[Convert.ToInt32(1 - players[0].playPile.playerSelectedPlayPile)].playPile.playerPlayPile[players[Convert.ToInt32(1 - players[0].playPile.playerSelectedPlayPile)].playPile.playerPlayPile.Count - 1].Length - 2)));
-                if (topCardFieldValue == topCardPlayValue + 1||topCardFieldValue == topCardPlayValue - 1)
-                {
-                    System.Diagnostics.Debug.WriteLine("same");
+                if (players[0].field.piles[players[0].field.playerSelectedFieldPile].pileCards.Count != 0) {
+                    players[0].field.piles[players[0].field.playerSelectedFieldPile].topCard = players[0].field.piles[players[0].field.playerSelectedFieldPile].pileCards[0];
+                    var topCardFieldValue = Convert.ToInt32((players[0].field.piles[players[0].field.playerSelectedFieldPile].topCard).Substring((players[0].field.piles[players[0].field.playerSelectedFieldPile].topCard).Length - 2));
+
+                    //                                             takes pile selected                                                    from pile choses last element (as it is the one shown)                                                                                            takes length of element shown and -2 to get a shorter string of number 0? || ??
+                    var topCardPlayValue = Convert.ToInt32((players[Convert.ToInt32(1 - players[0].playPile.playerSelectedPlayPile)].playPile.playerPlayPile[(players[Convert.ToInt32(1 - players[0].playPile.playerSelectedPlayPile)].playPile.playerPlayPile.Count - 1)]).Substring((players[Convert.ToInt32(1 - players[0].playPile.playerSelectedPlayPile)].playPile.playerPlayPile[players[Convert.ToInt32(1 - players[0].playPile.playerSelectedPlayPile)].playPile.playerPlayPile.Count - 1].Length - 2)));
+
+
+
+                    if ((topCardPlayValue == topCardFieldValue + 1 || topCardPlayValue == topCardFieldValue - 1) || (topCardPlayValue == 1 && topCardFieldValue == 13) || (topCardPlayValue == 13 && topCardFieldValue == 1))
+                    {
+                        System.Diagnostics.Debug.WriteLine(topCardFieldValue + "" + topCardPlayValue + " yeha");
+                        moveCard(players[0].field.piles[players[0].field.playerSelectedFieldPile].pileCards, players[Convert.ToInt32(1 - players[0].playPile.playerSelectedPlayPile)].playPile.playerPlayPile,"first","");
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine("nope");
+                    }
                 }
-                else
-                {
-                    System.Diagnostics.Debug.WriteLine("different value");
-                }
-                //do space
             }
         }
     }
