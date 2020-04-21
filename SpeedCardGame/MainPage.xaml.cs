@@ -26,11 +26,12 @@ namespace SpeedCardGame
     public sealed partial class MainPage : Page 
     {
         //global variables
-        Player mainPlayer = new Player();
+        public List<Player> players = new List<Player> { } ;
         public Windows.UI.Xaml.Thickness baseMarginSetupCards = new Thickness(10,0,10,20);
         public List<String> deckCards = new List<string> { };
         Random rand = new Random();
         public static string[] suits = { "Clubs", "Diamonds", "Hearts", "Spades" };
+        public String gameStatus = "not Running";
 
         public class Player
         {
@@ -44,6 +45,7 @@ namespace SpeedCardGame
         {
             public int playerSelectedPlayPile;
             public List<String> playerPlayPile;
+            public String nameOfLinkedPlayPile;
         }
         public class userField{
             public List<fieldPile> piles;
@@ -90,94 +92,176 @@ namespace SpeedCardGame
                 from.Remove(moveCard);
             }
         }
-
         public void setUpGame()
         {
-            mainPlayer.field = new userField();
-            mainPlayer.cardsInDeck = new List<string> { };
-            mainPlayer.playPile = new userPlay();
-            //intialise deck
-            foreach (string suit in suits)
+            if (gameStatus == "not Running")
             {
-                string adCardtoDeck = suit;
-                for (int vals = 1; vals < 14; vals++)
+                //intialise deck
+                deckCards = new List<String>{ };
+                foreach (string suit in suits)
                 {
-                    if (vals < 10)
+                    string adCardtoDeck = suit;
+                    for (int vals = 1; vals < 14; vals++)
                     {
-                        deckCards.Add($"{adCardtoDeck}0{vals}");
-                    }
-                    else
-                    {
-                        deckCards.Add($"{adCardtoDeck}{vals}");
+                        if (vals < 10)
+                        {
+                            deckCards.Add($"{adCardtoDeck}0{vals}");
+                        }
+                        else
+                        {
+                            deckCards.Add($"{adCardtoDeck}{vals}");
+                        }
                     }
                 }
-            }
-            deckCards = shuffle(deckCards);
-            //basic intialisation of class add more when random cards in deck implimetnted
-            for (int dealCard = Convert.ToInt32(Math.Floor(Convert.ToDecimal(deckCards.Count / 2))); dealCard > 0; dealCard--)
-            {
-                moveCard(deckCards,mainPlayer.cardsInDeck,"random");
-            }
-            mainPlayer.field.piles = new List<fieldPile> { };
-            for (int i = 1; i < 6; i++)
-            {
-                fieldPile pile = new fieldPile();
-                pile.pileCards = new List<string> { };
-                for (int j = i; j > 0; j--) {
-                    moveCard(mainPlayer.cardsInDeck, pile.pileCards, "first");
+                deckCards = shuffle(deckCards);
+                //initialise players
+                players.Add(new Player());
+                players[0].Name = "player";
+                players.Add(new Player());
+                players[1].Name = "comp";
+                var CardsToEachPlayer = deckCards.Count / players.Count;
+
+                foreach (var playersToSetUp in players)
+                {
+                    playersToSetUp.field = new userField();
+                    playersToSetUp.cardsInDeck = new List<string> { };
+                    playersToSetUp.playPile = new userPlay();
+
+                    //basic intialisation of class add more when random cards in deck implimetnted
+                    for (int dealCard = Convert.ToInt32(Math.Floor(Convert.ToDecimal(CardsToEachPlayer))); dealCard > 0; dealCard--)
+                    {
+                        moveCard(deckCards, playersToSetUp.cardsInDeck, "random");
+                    }
+                    playersToSetUp.field.piles = new List<fieldPile> { };
+                    for (int i = 1; i < 6; i++)
+                    {
+                        fieldPile pile = new fieldPile();
+                        pile.pileCards = new List<string> { };
+                        for (int j = i; j > 0; j--)
+                        {
+                            moveCard(playersToSetUp.cardsInDeck, pile.pileCards, "first");
+                        }
+                        pile.topCard = pile.pileCards[0];
+                        pile.nameOfLinkedPile = $"{playersToSetUp.Name}FieldPile{i}";
+                        playersToSetUp.field.piles.Add(pile);
+                    }
+                    playersToSetUp.field.playerSelectedFieldPile = 0;
+                    UpdateFieldCards("selectedFieldChanged");
+                    playersToSetUp.playPile.playerSelectedPlayPile = 1;
+                    UpdateFieldCards("selectedPlayChanged");
+                    playersToSetUp.playPile.nameOfLinkedPlayPile = $"{playersToSetUp.Name}PlayPile";
+                    playersToSetUp.field.fieldEmpty = false;
+                    playersToSetUp.playPile.playerPlayPile = new List<String> { };
+                    
+                    //move to round start moveCard(playersToSetUp.cardsInDeck, playersToSetUp.playPile.playerPlayPile, "first");
+
                 }
-                pile.topCard = pile.pileCards[0];
-                pile.nameOfLinkedPile =  $"playerFieldPile{i}";    
-                mainPlayer.field.piles.Add(pile);
+                Grid.FocusVisualSecondaryBrushProperty.Equals("#FF297837");
+                updateVisualPilesAll();
+                gameStatus = "set Up";
             }
-            mainPlayer.field.playerSelectedFieldPile = 0;
-            UpdateFieldCards("selectedFieldChanged");
-            mainPlayer.playPile.playerSelectedPlayPile = 1;
-            UpdateFieldCards("selectedPlayChanged");
-            mainPlayer.field.fieldEmpty = false;
-            mainPlayer.playPile.playerPlayPile = new List<String> { };
-            moveCard(mainPlayer.cardsInDeck, mainPlayer.playPile.playerPlayPile, "first");
-            Grid.FocusVisualSecondaryBrushProperty.Equals( "#FF297837");
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("Round running can't reset");
+            }
+        }
+
+        public void flipPP()
+        {
+            if (players[0].cardsInDeck.Count != 0 && players[1].cardsInDeck.Count != 0)
+            {
+                if (players[0].cardsInDeck.Count == 0) 
+                {
+                    moveCard(players[1].cardsInDeck, players[1].playPile.playerPlayPile, "first");
+                }
+                else if (players[1].cardsInDeck.Count == 0)
+                {
+                    moveCard(players[0].cardsInDeck, players[0].playPile.playerPlayPile, "first");
+                }
+                else
+                {
+                    moveCard(players[1].cardsInDeck, players[1].playPile.playerPlayPile, "first");
+                    moveCard(players[0].cardsInDeck, players[0].playPile.playerPlayPile, "first");
+                }
+            }
+            else
+            {
+                //resets game as tie 
+                gameStatus = "not Running";
+                setUpGame();
+            }
             updateVisualPilesAll();
         }
         public void updateVisualPilesAll()
         {
-            if (mainPlayer.field.piles != null)
+            foreach (var playersToUpdate in players)
             {
-                foreach (var set in mainPlayer.field.piles)
+                //field piles
+                if (playersToUpdate.field.piles != null)
                 {
-                    if (set.pileCards.Count != 0)
+                    foreach (var set in playersToUpdate.field.piles)
                     {
-                        set.topCard = set.pileCards[0];
+                        if (set.pileCards.Count != 0)
+                        {
+                            set.topCard = set.pileCards[0];
+                        }
+                        else
+                        {
+                            set.topCard = "Card_back";
+                        }
+                        switch (set.nameOfLinkedPile)
+                        {
+                            //don't know how to dynamicaly call elements
+                            // don't know a way to convert string to Windows.UI.Xaml.Controls.Image/ dynamic calling of images
+                            case ("playerFieldPile1"):
+                                playerFieldPile1.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
+                                break;
+                            case ("playerFieldPile2"):
+                                playerFieldPile2.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
+                                break;
+                            case ("playerFieldPile3"):
+                                playerFieldPile3.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
+                                break;
+                            case ("playerFieldPile4"):
+                                playerFieldPile4.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
+                                break;
+                            case ("playerFieldPile5"):
+                                playerFieldPile5.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
+                                break;
+                            case ("compFieldPile1"):
+                                compFieldPile1.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
+                                break;
+                            case ("compFieldPile2"):
+                                compFieldPile2.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
+                                break;
+                            case ("compFieldPile3"):
+                                compFieldPile3.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
+                                break;
+                            case ("compFieldPile4"):
+                                compFieldPile4.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
+                                break;
+                            case ("compFieldPile5"):
+                                compFieldPile5.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
+                                break;
+                        }
                     }
-                    else
+                }
+
+                //play piles
+                if (playersToUpdate.playPile.playerPlayPile.Count != 0)
+                {
+                    System.Diagnostics.Debug.WriteLine(playersToUpdate.playPile.nameOfLinkedPlayPile);
+                    switch (playersToUpdate.playPile.nameOfLinkedPlayPile)
                     {
-                        set.topCard = "Card_back";
-                    }
-                    switch (set.nameOfLinkedPile)
-                    {
-                        //don't know how to dynamicaly call elements
-                        // don't know a way to convert string to Windows.UI.Xaml.Controls.Image/ dynamic calling of images
-                        case ("playerFieldPile1"):
-                            playerFieldPile1.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
+                        //add special case for round win event
+                        case ("compPlayPile"):
+                            compPlayPile.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{playersToUpdate.playPile.playerPlayPile[playersToUpdate.playPile.playerPlayPile.Count - 1]}.png"));
                             break;
-                        case ("playerFieldPile2"):
-                            playerFieldPile2.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
-                            break;
-                        case ("playerFieldPile3"):
-                            playerFieldPile3.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
-                            break;
-                        case ("playerFieldPile4"):
-                            playerFieldPile4.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
-                            break;
-                        case ("playerFieldPile5"):
-                            playerFieldPile5.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
+                        case ("playerPlayPile"):
+                            playerPlayPile.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{playersToUpdate.playPile.playerPlayPile[playersToUpdate.playPile.playerPlayPile.Count - 1]}.png"));
                             break;
                     }
                 }
-            }
-            if (mainPlayer.playPile.playerPlayPile != null) {
-                playerPlayPile.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{mainPlayer.playPile.playerPlayPile[mainPlayer.playPile.playerPlayPile.Count-1]}.png"));//add special case for round win event
             }
         }
         public void UpdateFieldCards(String sendingOpperation)
@@ -186,38 +270,42 @@ namespace SpeedCardGame
             if (sendingOpperation == "selectedFieldChanged")
             {
                 // don't know a way to convert string to Windows.UI.Xaml.Controls.Image/ dynamic calling of images
-                switch (mainPlayer.field.playerSelectedFieldPile)
+                if (players[0].field != null)
                 {
-                    case(0):
-                        playerFieldPile2.Margin = baseMarginSetupCards;
-                        playerFieldPile1.Margin = new Thickness(0);
-                        break;
-                    case (1):
-                        playerFieldPile1.Margin = baseMarginSetupCards;
-                        playerFieldPile3.Margin = baseMarginSetupCards;
-                        playerFieldPile2.Margin = new Thickness(0);
-                        break;
-                    case (2):
-                        playerFieldPile2.Margin = baseMarginSetupCards;
-                        playerFieldPile4.Margin = baseMarginSetupCards;
-                        playerFieldPile3.Margin = new Thickness(0);
-                        break;
-                    case (3):
-                        playerFieldPile3.Margin = baseMarginSetupCards;
-                        playerFieldPile5.Margin = baseMarginSetupCards;
-                        playerFieldPile4.Margin = new Thickness(0);
-                        break;
-                    case (4):
-                        playerFieldPile4.Margin = baseMarginSetupCards;
-                        playerFieldPile5.Margin = new Thickness(0);
-                        break;
+                    switch (players[0].field.playerSelectedFieldPile)
+                    {
+                        case (0):
+                            playerFieldPile2.Margin = baseMarginSetupCards;
+                            playerFieldPile1.Margin = new Thickness(0);
+                            break;
+                        case (1):
+                            playerFieldPile1.Margin = baseMarginSetupCards;
+                            playerFieldPile3.Margin = baseMarginSetupCards;
+                            playerFieldPile2.Margin = new Thickness(0);
+                            break;
+                        case (2):
+                            playerFieldPile2.Margin = baseMarginSetupCards;
+                            playerFieldPile4.Margin = baseMarginSetupCards;
+                            playerFieldPile3.Margin = new Thickness(0);
+                            break;
+                        case (3):
+                            playerFieldPile3.Margin = baseMarginSetupCards;
+                            playerFieldPile5.Margin = baseMarginSetupCards;
+                            playerFieldPile4.Margin = new Thickness(0);
+                            break;
+                        case (4):
+                            playerFieldPile4.Margin = baseMarginSetupCards;
+                            playerFieldPile5.Margin = new Thickness(0);
+                            break;
+                    }
+
                 }
 
                 //MainPage.((stack.nameOfLinkedPile).To).Margin = new Thickness(0, 0, 0, 0);
             }
             if (sendingOpperation == "selectedPlayChanged")
             {
-                switch (mainPlayer.playPile.playerSelectedPlayPile)
+                switch (players[0].playPile.playerSelectedPlayPile)
                 {
                     case (0):
                         playerPlayPile.Margin = baseMarginSetupCards;
@@ -236,46 +324,74 @@ namespace SpeedCardGame
         }
         public MainPage()
         {
-            this.InitializeComponent();
-            setUpGame();
-            
+            this.InitializeComponent();           
         }
 
         private void KeyPressed(object sender, KeyRoutedEventArgs e)
         {
             //System.Diagnostics.Debug.WriteLine(e.Key);
             //System.Diagnostics.Debug.WriteLine(sender);
-            if (Convert.ToString(e.Key) == "A"|| Convert.ToString(e.Key) == "Left")
+            if (Convert.ToString(e.Key) == "P")
             {
-                if (mainPlayer.field.playerSelectedFieldPile != 0)
+                setUpGame();
+            }
+            if (gameStatus != "not Running")
+            {
+                if (Convert.ToString(e.Key) == "A" || Convert.ToString(e.Key) == "Left")
                 {
-                    mainPlayer.field.playerSelectedFieldPile--;
-                    UpdateFieldCards("selectedFieldChanged");
+                    if (players[0].field.playerSelectedFieldPile != 0)
+                    {
+                        players[0].field.playerSelectedFieldPile--;
+                        UpdateFieldCards("selectedFieldChanged");
+                    }
+                }
+                else if (Convert.ToString(e.Key) == "D" || Convert.ToString(e.Key) == "Right")
+                {
+                    if (players[0].field.playerSelectedFieldPile != 4)
+                    {
+                        players[0].field.playerSelectedFieldPile++;
+                        UpdateFieldCards("selectedFieldChanged");
+                    }
+                }
+                else if (Convert.ToString(e.Key) == "W" || Convert.ToString(e.Key) == "Up")
+                {
+                    if (players[0].playPile.playerSelectedPlayPile != 1)
+                    {
+                        players[0].playPile.playerSelectedPlayPile++;
+                        UpdateFieldCards("selectedPlayChanged");
+                    }
+                }
+                else if (e.Key == Windows.System.VirtualKey.S || e.Key == Windows.System.VirtualKey.Down)
+                {
+                    if (players[0].playPile.playerSelectedPlayPile != 0)
+                    {
+                        players[0].playPile.playerSelectedPlayPile--;
+                        UpdateFieldCards("selectedPlayChanged");
+                    }
                 }
             }
-            else if (Convert.ToString(e.Key) == "D" || Convert.ToString(e.Key) == "Right")
+        }
+
+        private void spacePressed(object sender, RoutedEventArgs e)
+        {
+            if (gameStatus == "set Up")
             {
-                if (mainPlayer.field.playerSelectedFieldPile != 4)
-                {
-                    mainPlayer.field.playerSelectedFieldPile++;
-                    UpdateFieldCards("selectedFieldChanged");
-                }
+                gameStatus = "round Start";
+                flipPP();
             }
-            else if (Convert.ToString(e.Key) == "W" || Convert.ToString(e.Key) == "Up")
+            else if (gameStatus == "round Start")
             {
-                if (mainPlayer.playPile.playerSelectedPlayPile != 1)
+                var topCardFieldValue = Convert.ToInt32((players[0].field.piles[players[0].field.playerSelectedFieldPile].topCard).Substring((players[0].field.piles[players[0].field.playerSelectedFieldPile].topCard).Length - 2));
+                var topCardPlayValue = Convert.ToInt32((players[Convert.ToInt32(1-players[0].playPile.playerSelectedPlayPile)].playPile.playerPlayPile[players[0].playPile.playerPlayPile.Count - 1]).Substring((players[Convert.ToInt32(1 - players[0].playPile.playerSelectedPlayPile)].playPile.playerPlayPile[players[Convert.ToInt32(1 - players[0].playPile.playerSelectedPlayPile)].playPile.playerPlayPile.Count - 1].Length - 2)));
+                if (topCardFieldValue == topCardPlayValue + 1||topCardFieldValue == topCardPlayValue - 1)
                 {
-                    mainPlayer.playPile.playerSelectedPlayPile++;
-                    UpdateFieldCards("selectedPlayChanged");
+                    System.Diagnostics.Debug.WriteLine("same");
                 }
-            }
-            else if (Convert.ToString(e.Key) == "S" || Convert.ToString(e.Key) == "Down")
-            {
-                if (mainPlayer.playPile.playerSelectedPlayPile != 0)
+                else
                 {
-                    mainPlayer.playPile.playerSelectedPlayPile--;
-                    UpdateFieldCards("selectedPlayChanged");
+                    System.Diagnostics.Debug.WriteLine("different value");
                 }
+                //do space
             }
         }
     }
