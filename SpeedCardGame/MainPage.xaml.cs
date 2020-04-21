@@ -140,10 +140,13 @@ namespace SpeedCardGame
                 }
                 deckCards = shuffle(deckCards);
                 //initialise players
-                players.Add(new Player());
-                players[0].Name = "player";
-                players.Add(new Player());
-                players[1].Name = "comp";
+                if (players.Count == 0)
+                {
+                    players.Add(new Player());
+                    players[0].Name = "player";
+                    players.Add(new Player());
+                    players[1].Name = "comp";
+                }
                 var CardsToEachPlayer = deckCards.Count / players.Count;
 
                 foreach (var playersToSetUp in players)
@@ -282,7 +285,6 @@ namespace SpeedCardGame
                     {
                         if (playersToUpdate.playPile.playerPlayPile.Count != 0)
                         {
-                            System.Diagnostics.Debug.WriteLine(playersToUpdate.playPile.nameOfLinkedPlayPile);
                             switch (playersToUpdate.playPile.nameOfLinkedPlayPile)
                             {
                                 //add special case for round win event
@@ -306,29 +308,26 @@ namespace SpeedCardGame
                 // don't know a way to convert string to Windows.UI.Xaml.Controls.Image/ dynamic calling of images
                 if (players[0].field != null)
                 {
+                    playerFieldPile1.Margin = baseMarginSetupCards;
+                    playerFieldPile2.Margin = baseMarginSetupCards;
+                    playerFieldPile3.Margin = baseMarginSetupCards;
+                    playerFieldPile4.Margin = baseMarginSetupCards;
+                    playerFieldPile5.Margin = baseMarginSetupCards;
                     switch (players[0].field.playerSelectedFieldPile)
                     {
                         case (0):
-                            playerFieldPile2.Margin = baseMarginSetupCards;
-                            playerFieldPile1.Margin = new Thickness(0);
+                            playerFieldPile1.Margin = new Thickness(0);.
                             break;
                         case (1):
-                            playerFieldPile1.Margin = baseMarginSetupCards;
-                            playerFieldPile3.Margin = baseMarginSetupCards;
                             playerFieldPile2.Margin = new Thickness(0);
                             break;
                         case (2):
-                            playerFieldPile2.Margin = baseMarginSetupCards;
-                            playerFieldPile4.Margin = baseMarginSetupCards;
                             playerFieldPile3.Margin = new Thickness(0);
                             break;
                         case (3):
-                            playerFieldPile3.Margin = baseMarginSetupCards;
-                            playerFieldPile5.Margin = baseMarginSetupCards;
                             playerFieldPile4.Margin = new Thickness(0);
                             break;
                         case (4):
-                            playerFieldPile4.Margin = baseMarginSetupCards;
                             playerFieldPile5.Margin = new Thickness(0);
                             break;
                     }
@@ -403,6 +402,10 @@ namespace SpeedCardGame
                         UpdateFieldCards("selectedPlayChanged");
                     }
                 }
+                else if (e.Key == Windows.System.VirtualKey.N )
+                {
+                    flipPP();
+                }
             }
         }
 
@@ -420,20 +423,15 @@ namespace SpeedCardGame
                 if (players[0].field.piles[players[0].field.playerSelectedFieldPile].pileCards.Count != 0) {
                     players[0].field.piles[players[0].field.playerSelectedFieldPile].topCard = players[0].field.piles[players[0].field.playerSelectedFieldPile].pileCards[0];
                     var topCardFieldValue = Convert.ToInt32((players[0].field.piles[players[0].field.playerSelectedFieldPile].topCard).Substring((players[0].field.piles[players[0].field.playerSelectedFieldPile].topCard).Length - 2));
-
                     //                                             takes pile selected                                                    from pile choses last element (as it is the one shown)                                                                                            takes length of element shown and -2 to get a shorter string of number 0? || ??
                     var topCardPlayValue = Convert.ToInt32((players[Convert.ToInt32(1 - players[0].playPile.playerSelectedPlayPile)].playPile.playerPlayPile[(players[Convert.ToInt32(1 - players[0].playPile.playerSelectedPlayPile)].playPile.playerPlayPile.Count - 1)]).Substring((players[Convert.ToInt32(1 - players[0].playPile.playerSelectedPlayPile)].playPile.playerPlayPile[players[Convert.ToInt32(1 - players[0].playPile.playerSelectedPlayPile)].playPile.playerPlayPile.Count - 1].Length - 2)));
-
-
-
                     if ((topCardPlayValue == topCardFieldValue + 1 || topCardPlayValue == topCardFieldValue - 1) || (topCardPlayValue == 1 && topCardFieldValue == 13) || (topCardPlayValue == 13 && topCardFieldValue == 1))
                     {
-                        System.Diagnostics.Debug.WriteLine(topCardFieldValue + "" + topCardPlayValue + " yeha");
                         moveCard(players[0].field.piles[players[0].field.playerSelectedFieldPile].pileCards, players[Convert.ToInt32(1 - players[0].playPile.playerSelectedPlayPile)].playPile.playerPlayPile,"first","");
                     }
                     else
                     {
-                        System.Diagnostics.Debug.WriteLine("nope");
+                        System.Diagnostics.Debug.WriteLine("no match");
                     }
                 }
             }
