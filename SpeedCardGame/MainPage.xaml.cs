@@ -70,7 +70,26 @@ namespace SpeedCardGame
             }
             return outList;
         }
-
+        public String checkSlap()
+        {
+            String oneFieldEmpty = null;
+            foreach (var UsersToCheckField in players)
+            {
+                var amountEmpty = 0;
+                foreach (var pileCount in UsersToCheckField.field.piles)
+                {
+                    if (pileCount.pileCards.Count == 0)
+                    {
+                        amountEmpty++;
+                    }
+                }
+                  if (amountEmpty == UsersToCheckField.field.piles.Count)
+                {
+                    oneFieldEmpty = UsersToCheckField.Name;
+                }
+            }
+            return oneFieldEmpty;
+        }
         public void moveCard(List<String> from, List<String> moveTo, String whatMoved, String whereMove)
         {
             if (whereMove == "")
@@ -155,6 +174,7 @@ namespace SpeedCardGame
                     playersToSetUp.cardsInDeck = new List<string> { };
                     playersToSetUp.playPile = new userPlay();
 
+
                     //basic intialisation of class add more when random cards in deck implimetnted
                     for (int dealCard = Convert.ToInt32(Math.Floor(Convert.ToDecimal(CardsToEachPlayer))); dealCard > 0; dealCard--)
                     {
@@ -180,9 +200,7 @@ namespace SpeedCardGame
                     playersToSetUp.playPile.nameOfLinkedPlayPile = $"{playersToSetUp.Name}PlayPile";
                     playersToSetUp.field.fieldEmpty = false;
                     playersToSetUp.playPile.playerPlayPile = new List<String> { };
-                    
                     //move to round start moveCard(playersToSetUp.cardsInDeck, playersToSetUp.playPile.playerPlayPile, "first","");
-
                 }
                 Grid.FocusVisualSecondaryBrushProperty.Equals("#FF297837");
                 updateVisualPilesAll();
@@ -193,7 +211,50 @@ namespace SpeedCardGame
                 System.Diagnostics.Debug.WriteLine("Round running can't reset");
             }
         }
+        public void NewRound()
+        {
 
+        }
+        public void roundEnd(String wonRound)
+        {
+            if (gameStatus == "round Ended")
+            {
+                if (wonRound == players[0].Name)
+                {
+                    foreach (var cardInPlayPile in players[Convert.ToInt32(1 - players[0].playPile.playerSelectedPlayPile)].playPile.playerPlayPile)
+                    {
+                        players[0].cardsInDeck.Add(cardInPlayPile);
+                    }
+                    foreach (var cardInPlayPileC in players[players[0].playPile.playerSelectedPlayPile].playPile.playerPlayPile)
+                    {
+                        players[1].cardsInDeck.Add(cardInPlayPileC);
+                    }
+                    //clear piles on field
+                }
+                else
+                {
+                    // test
+                    System.Diagnostics.Debug.WriteLine("player didn't win");
+                    //add chance to chose wrong pile for lower difficultiesS
+                }
+                foreach (var refillDecks in players)//card in deck = 0??? they vannish and get replaced by new cards after second go through
+                {
+                    foreach (var fields in refillDecks.field.piles)
+                    {
+                        foreach (var pilesOnField in fields.pileCards)
+                        {
+                            refillDecks.cardsInDeck.Add(pilesOnField);
+                        }
+                        //clear pile??
+                    } 
+                    shuffle(refillDecks.cardsInDeck);
+                }
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("game still going");
+            }
+        }
         public void flipPP()
         {
             if (players[0].cardsInDeck.Count != 0 && players[1].cardsInDeck.Count != 0)
@@ -277,7 +338,6 @@ namespace SpeedCardGame
                         }
                     }
                 }
-
                 //play piles
                 if (playersToUpdate.playPile != null)
                 {
@@ -295,6 +355,11 @@ namespace SpeedCardGame
                                     playerPlayPile.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{playersToUpdate.playPile.playerPlayPile[playersToUpdate.playPile.playerPlayPile.Count - 1]}.png"));
                                     break;
                             }
+                        }
+                        else
+                        {
+                            compPlayPile.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Card_back.png"));
+                            playerPlayPile.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Card_back.png"));
                         }
                     }
                 }
@@ -316,7 +381,7 @@ namespace SpeedCardGame
                     switch (players[0].field.playerSelectedFieldPile)
                     {
                         case (0):
-                            playerFieldPile1.Margin = new Thickness(0);.
+                            playerFieldPile1.Margin = new Thickness(0);
                             break;
                         case (1):
                             playerFieldPile2.Margin = new Thickness(0);
@@ -359,7 +424,6 @@ namespace SpeedCardGame
         {
             this.InitializeComponent();           
         }
-
         private void KeyPressed(object sender, KeyRoutedEventArgs e)
         {
             //System.Diagnostics.Debug.WriteLine(e.Key);
@@ -408,7 +472,6 @@ namespace SpeedCardGame
                 }
             }
         }
-
         private void spacePressed(object sender, RoutedEventArgs e)
         {
             //activates game
@@ -420,18 +483,34 @@ namespace SpeedCardGame
             //comparing system
             else if (gameStatus == "round Start")
             {
-                if (players[0].field.piles[players[0].field.playerSelectedFieldPile].pileCards.Count != 0) {
-                    players[0].field.piles[players[0].field.playerSelectedFieldPile].topCard = players[0].field.piles[players[0].field.playerSelectedFieldPile].pileCards[0];
-                    var topCardFieldValue = Convert.ToInt32((players[0].field.piles[players[0].field.playerSelectedFieldPile].topCard).Substring((players[0].field.piles[players[0].field.playerSelectedFieldPile].topCard).Length - 2));
-                    //                                             takes pile selected                                                    from pile choses last element (as it is the one shown)                                                                                            takes length of element shown and -2 to get a shorter string of number 0? || ??
-                    var topCardPlayValue = Convert.ToInt32((players[Convert.ToInt32(1 - players[0].playPile.playerSelectedPlayPile)].playPile.playerPlayPile[(players[Convert.ToInt32(1 - players[0].playPile.playerSelectedPlayPile)].playPile.playerPlayPile.Count - 1)]).Substring((players[Convert.ToInt32(1 - players[0].playPile.playerSelectedPlayPile)].playPile.playerPlayPile[players[Convert.ToInt32(1 - players[0].playPile.playerSelectedPlayPile)].playPile.playerPlayPile.Count - 1].Length - 2)));
-                    if ((topCardPlayValue == topCardFieldValue + 1 || topCardPlayValue == topCardFieldValue - 1) || (topCardPlayValue == 1 && topCardFieldValue == 13) || (topCardPlayValue == 13 && topCardFieldValue == 1))
-                    {
-                        moveCard(players[0].field.piles[players[0].field.playerSelectedFieldPile].pileCards, players[Convert.ToInt32(1 - players[0].playPile.playerSelectedPlayPile)].playPile.playerPlayPile,"first","");
+                if (checkSlap() == null){
+                    if (players[0].field.piles[players[0].field.playerSelectedFieldPile].pileCards.Count != 0) {
+                        players[0].field.piles[players[0].field.playerSelectedFieldPile].topCard = players[0].field.piles[players[0].field.playerSelectedFieldPile].pileCards[0];
+                        var topCardFieldValue = Convert.ToInt32((players[0].field.piles[players[0].field.playerSelectedFieldPile].topCard).Substring((players[0].field.piles[players[0].field.playerSelectedFieldPile].topCard).Length - 2));
+                        //                                             takes pile selected                                                    from pile choses last element (as it is the one shown)                                                                                            takes length of element shown and -2 to get a shorter string of number 0? || ??
+                        var topCardPlayValue = Convert.ToInt32((players[Convert.ToInt32(1 - players[0].playPile.playerSelectedPlayPile)].playPile.playerPlayPile[(players[Convert.ToInt32(1 - players[0].playPile.playerSelectedPlayPile)].playPile.playerPlayPile.Count - 1)]).Substring((players[Convert.ToInt32(1 - players[0].playPile.playerSelectedPlayPile)].playPile.playerPlayPile[players[Convert.ToInt32(1 - players[0].playPile.playerSelectedPlayPile)].playPile.playerPlayPile.Count - 1].Length - 2)));
+                        if ((topCardPlayValue == topCardFieldValue + 1 || topCardPlayValue == topCardFieldValue - 1) || (topCardPlayValue == 1 && topCardFieldValue == 13) || (topCardPlayValue == 13 && topCardFieldValue == 1))
+                        {
+                            moveCard(players[0].field.piles[players[0].field.playerSelectedFieldPile].pileCards, players[Convert.ToInt32(1 - players[0].playPile.playerSelectedPlayPile)].playPile.playerPlayPile, "first", "");
+                        }
+                        else
+                        {
+                            System.Diagnostics.Debug.WriteLine("no match");
+                        }
                     }
-                    else
+                }
+                else
+                {
+                    //snap 
+                    gameStatus = "round Ended";
+                    if (checkSlap() == players[0].Name) {
+                        //player has no cards in hand   
+                        roundEnd(players[0].Name);
+                        NewRound();
+                    }
+                    else//comp
                     {
-                        System.Diagnostics.Debug.WriteLine("no match");
+
                     }
                 }
             }
