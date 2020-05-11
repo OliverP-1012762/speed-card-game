@@ -90,6 +90,25 @@ namespace SpeedCardGame
             }
             return oneFieldEmpty;
         }
+
+        public bool checkWin()
+        {
+            var Win = false;
+            foreach(Player checkWinP in players){
+                if (checkWinP.cardsInDeck.Count == 1)
+                {
+                    if (Win)
+                    {
+                        System.Diagnostics.Debug.WriteLine("error, more than 1 player wins");
+                    }
+                    else
+                    {
+                        Win = true;
+                    }
+                }
+            }
+            return Win;
+        }
         public void moveCard(List<String> from, List<String> moveTo, String whatMoved, String whereMove)
         {
             if (whereMove == "")
@@ -189,7 +208,6 @@ namespace SpeedCardGame
                         {
                             moveCard(playersToSetUp.cardsInDeck, pile.pileCards, "first","");
                         }
-                        pile.topCard = pile.pileCards[0];
                         pile.nameOfLinkedPile = $"{playersToSetUp.Name}FieldPile{i}";
                         playersToSetUp.field.piles.Add(pile);
                     }
@@ -213,7 +231,45 @@ namespace SpeedCardGame
         }
         public void NewRound()
         {
+            //from roundEnd
+            if (gameStatus == "round end")
+            {
+                foreach (var playersToSetUp in players)
+                {
+                    //reset players field
+                    playersToSetUp.field = new userField();
+                    if (playersToSetUp.cardsInDeck.Count >= 15) {
+                        foreach (fieldPile fieldP in playersToSetUp.field.piles)
+                        {
+                            for (int i = 1; i < 6; i++)
+                            {
+                                for (int j = i; j > 0; j--)
+                                {
+                                    moveCard(playersToSetUp.cardsInDeck, fieldP.pileCards, "first", "");
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        while (playersToSetUp.cardsInDeck.Count != 0)
+                        {
 
+                        }
+                    }
+                    playersToSetUp.field.playerSelectedFieldPile = 0;
+                    UpdateFieldCards("selectedFieldChanged");
+                    playersToSetUp.playPile.playerSelectedPlayPile = 1;
+                    UpdateFieldCards("selectedPlayChanged");
+                    playersToSetUp.field.fieldEmpty = false;
+                }
+                updateVisualPilesAll();
+                gameStatus = "set Up";
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("Round running can't reset");
+            }
         }
         public void roundEnd(String wonRound)
         {
@@ -230,6 +286,10 @@ namespace SpeedCardGame
                         players[1].cardsInDeck.Add(cardInPlayPileC);
                     }
                     //clear piles on field
+                    foreach (var playersToClear in players)
+                    {
+                        playersToClear.playPile.playerPlayPile.Clear();
+                    }
                 }
                 else
                 {
@@ -237,15 +297,17 @@ namespace SpeedCardGame
                     System.Diagnostics.Debug.WriteLine("player didn't win");
                     //add chance to chose wrong pile for lower difficultiesS
                 }
-                foreach (var refillDecks in players)//card in deck = 0??? they vannish and get replaced by new cards after second go through
+                // add cards not played in field
+                foreach (var refillDecks in players)
                 {
                     foreach (var fields in refillDecks.field.piles)
                     {
                         foreach (var pilesOnField in fields.pileCards)
                         {
                             refillDecks.cardsInDeck.Add(pilesOnField);
+                            System.Diagnostics.Debug.WriteLine(pilesOnField);
                         }
-                        //clear pile??
+                        fields.pileCards.Clear();
                     } 
                     shuffle(refillDecks.cardsInDeck);
                 }
@@ -254,6 +316,7 @@ namespace SpeedCardGame
             {
                 System.Diagnostics.Debug.WriteLine("game still going");
             }
+            gameStatus = "round end";
         }
         public void flipPP()
         {
@@ -506,7 +569,14 @@ namespace SpeedCardGame
                     if (checkSlap() == players[0].Name) {
                         //player has no cards in hand   
                         roundEnd(players[0].Name);
-                        NewRound();
+                        if (checkWin())
+                        {
+                            //end game
+                        }
+                        else
+                        {
+                            NewRound();
+                        }
                     }
                     else//comp
                     {
