@@ -237,24 +237,28 @@ namespace SpeedCardGame
                 foreach (var playersToSetUp in players)
                 {
                     //reset players field
-                    playersToSetUp.field = new userField();
                     if (playersToSetUp.cardsInDeck.Count >= 15) {
-                        foreach (fieldPile fieldP in playersToSetUp.field.piles)
+                        for (int i = 0; i <= 4; i++)
                         {
-                            for (int i = 1; i < 6; i++)
+                            for (int j = i+1; j > 0; j--)
                             {
-                                for (int j = i; j > 0; j--)
-                                {
-                                    moveCard(playersToSetUp.cardsInDeck, fieldP.pileCards, "first", "");
-                                }
+                                moveCard(playersToSetUp.cardsInDeck, playersToSetUp.field.piles[i].pileCards, "first", "");
                             }
                         }
+                        
                     }
                     else
                     {
+                        int pileToAdd = 0;
                         while (playersToSetUp.cardsInDeck.Count != 0)
                         {
-
+                            playersToSetUp.field.piles[pileToAdd].pileCards.Add(playersToSetUp.cardsInDeck[0]);
+                            playersToSetUp.cardsInDeck.RemoveAt(0);
+                            if (pileToAdd == 4)
+                            {
+                                pileToAdd = -1;
+                            }
+                            pileToAdd++;
                         }
                     }
                     playersToSetUp.field.playerSelectedFieldPile = 0;
@@ -305,11 +309,10 @@ namespace SpeedCardGame
                         foreach (var pilesOnField in fields.pileCards)
                         {
                             refillDecks.cardsInDeck.Add(pilesOnField);
-                            System.Diagnostics.Debug.WriteLine(pilesOnField);
                         }
                         fields.pileCards.Clear();
                     } 
-                    shuffle(refillDecks.cardsInDeck);
+                    //shuffle(refillDecks.cardsInDeck);
                 }
             }
             else
@@ -531,7 +534,9 @@ namespace SpeedCardGame
                 }
                 else if (e.Key == Windows.System.VirtualKey.N )
                 {
-                    flipPP();
+                    if (gameStatus != "set Up") {
+                        flipPP();
+                    }
                 }
             }
         }
@@ -558,7 +563,7 @@ namespace SpeedCardGame
                         }
                         else
                         {
-                            System.Diagnostics.Debug.WriteLine("no match");
+                            //System.Diagnostics.Debug.WriteLine("no match");
                         }
                     }
                 }
@@ -566,15 +571,22 @@ namespace SpeedCardGame
                 {
                     //snap 
                     gameStatus = "round Ended";
+                    System.Diagnostics.Debug.WriteLine(players[0].cardsInDeck.Count);
                     if (checkSlap() == players[0].Name) {
                         //player has no cards in hand   
-                        roundEnd(players[0].Name);
+                        System.Diagnostics.Debug.WriteLine(players[0].cardsInDeck.Count);
+                        System.Diagnostics.Debug.WriteLine(players[1].cardsInDeck.Count);
+                        System.Diagnostics.Debug.WriteLine(players[0].playPile.playerPlayPile.Count);
+                        System.Diagnostics.Debug.WriteLine(players[1].playPile.playerPlayPile.Count);
+                        roundEnd(players[0].Name);// cards in deck = 0
                         if (checkWin())
                         {
                             //end game
                         }
                         else
                         {
+                            System.Diagnostics.Debug.WriteLine(players[0].cardsInDeck.Count);
+                            System.Diagnostics.Debug.WriteLine(players[1].cardsInDeck.Count);
                             NewRound();
                         }
                     }
