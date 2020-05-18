@@ -345,8 +345,8 @@ namespace SpeedCardGame
             }
             updateVisual($"{players[0].Name}Play");
             updateVisual($"{players[1].Name}Play");
-            System.Diagnostics.Debug.WriteLine(players[0].cardsInDeck.Count + ":Pd " + players[1].cardsInDeck.Count + ":Cd ");
-            if (false)//visual representation of pile done
+            //System.Diagnostics.Debug.WriteLine(players[0].cardsInDeck.Count + ":Pd " + players[1].cardsInDeck.Count + ":Cd ");
+            if (false)//visual representation of pile having no cards
             {            }
         }
         public void updateVisual(String elementToUpdate)
