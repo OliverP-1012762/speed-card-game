@@ -23,7 +23,7 @@ namespace SpeedCardGame
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MainPage : Page 
+    public sealed partial class MainPage : Page
     {
         //global variables
         public List<Player> players = new List<Player> { } ;
@@ -32,6 +32,13 @@ namespace SpeedCardGame
         Random rand = new Random();
         public static string[] suits = { "Clubs", "Diamonds", "Hearts", "Spades" };
         public String gameStatus = "not Running";
+        public String compStatus = "";
+
+        public MainPage()
+        {
+            this.InitializeComponent();
+            
+        }
 
         public class Player
         {
@@ -56,6 +63,7 @@ namespace SpeedCardGame
             public List<string> pileCards;
             public String nameOfLinkedPile;
         }
+        /*
         public List<String> shuffle(List<String> inList)
         {
             List<String> outList = new List<String> { };
@@ -578,10 +586,7 @@ namespace SpeedCardGame
 
             //update top card
         }
-        public MainPage()
-        {
-            this.InitializeComponent();           
-        }
+        
         private void KeyPressed(object sender, KeyRoutedEventArgs e)
         {
             //System.Diagnostics.Debug.WriteLine(e.Key);
@@ -685,5 +690,36 @@ namespace SpeedCardGame
                 }
             }
         }
+
+        private void compTurn(int times)
+        {
+            for (var runCT = 0; runCT<times; runCT++)
+            {
+                /*
+                //slap 
+                if (false)
+                {
+
+                }
+                //play 
+                else if(false){
+
+                }
+                else
+                {
+                    //find pile
+
+                } 
+                
+            }
+        }
+        */
+        private void compTurn(object sender, RoutedEventArgs e)
+        {
+            //compTurn(1);
+
+            this.Frame.Navigate(typeof(gamePage), null);
+        }
+        
     }
 }

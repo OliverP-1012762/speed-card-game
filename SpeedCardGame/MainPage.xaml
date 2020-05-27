@@ -8,22 +8,9 @@
     mc:Ignorable="d"
     Background="#FF1A6026">
 
-    <Grid KeyDown="KeyPressed" >
-        <Image x:Name="playerFieldPile1" Grid.Column="2" Grid.Row="2" Source="ms-appx:///Assets/Card_back.png" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="10,0,10,20" ></Image>
-        <Image x:Name="playerFieldPile2" Grid.Column="3" Grid.Row="2" Source="ms-appx:///Assets/Card_back.png" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="10,0,10,20" ></Image>
-        <Image x:Name="playerFieldPile3" Grid.Column="4" Grid.Row="2" Source="ms-appx:///Assets/Card_back.png" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="10,0,10,20" ></Image>
-        <Image x:Name="playerFieldPile4" Grid.Column="5" Grid.Row="2" Source="ms-appx:///Assets/Card_back.png" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="10,0,10,20" ></Image>
-        <Image x:Name="playerFieldPile5" Grid.Column="6" Grid.Row="2" Source="ms-appx:///Assets/Card_back.png" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="10,0,10,20" ></Image>
-        <Image x:Name="compFieldPile1" Grid.Column="2" Grid.Row="0" Source="ms-appx:///Assets/Card_back.png" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="10,0,10,20" ></Image>
-        <Image x:Name="compFieldPile2" Grid.Column="3" Grid.Row="0" Source="ms-appx:///Assets/Card_back.png" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="10,0,10,20" ></Image>
-        <Image x:Name="compFieldPile3" Grid.Column="4" Grid.Row="0" Source="ms-appx:///Assets/Card_back.png" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="10,0,10,20" ></Image>
-        <Image x:Name="compFieldPile4" Grid.Column="5" Grid.Row="0" Source="ms-appx:///Assets/Card_back.png" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="10,0,10,20" ></Image>
-        <Image x:Name="compFieldPile5" Grid.Column="6" Grid.Row="0" Source="ms-appx:///Assets/Card_back.png" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="10,0,10,20" ></Image>
-        <Image x:Name="playerHandPile" Grid.Column="7" Grid.Row="1" Source="ms-appx:///Assets/Card_back.png" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0,10,20" ></Image>
-        <Image x:Name="compHandPile" Grid.Column="1" Grid.Row="1" Source="ms-appx:///Assets/Card_back.png" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0,10,20" ></Image>
-        <Image x:Name="playerPlayPile" Grid.Column="5" Grid.Row="1" Source="ms-appx:///Assets/Card_back.png" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0,10,20" ></Image>
-        <Image x:Name="compPlayPile" Grid.Column="3" Grid.Row="1" Source="ms-appx:///Assets/Card_back.png" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0,10,20" ></Image>
-        <Button x:Name="KeyActivatior"  Opacity="0.1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"  Click="spacePressed" Grid.ColumnSpan="9" Grid.RowSpan="3" Margin="3,0,-3,0"/>
+    <Grid >
+      
+        <Button x:Name="compPlay" Width="1000" Height="100" Background="#FFD08CD8" Grid.ColumnSpan="6" Grid.Column="2" Margin="0,343,0,0" Grid.RowSpan="2" Grid.Row="1" VerticalAlignment="Top" Click="compTurn" ></Button>
         <Grid.RowDefinitions>
             <RowDefinition x:Name="compSide" Height="3*"/>
             <RowDefinition x:Name="Field" Height="5*"/>
