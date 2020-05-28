@@ -40,7 +40,6 @@ namespace SpeedCardGame
             public String Name;
             public int value;
         }
-
         public class Player
         {
             public String Name;
@@ -118,7 +117,14 @@ namespace SpeedCardGame
         }
         public async void winMsg()
         {
-            var winner = players[0].Name;
+            var winner = "no one";
+            if (players[0].cardsInDeck.Count <= 1) {
+                winner = "1";
+            }
+            else
+            {
+                winner = "0";
+            }
             var dialog = new MessageDialog($"Player {winner} wins");
             dialog.Commands.Add(new UICommand { Label = "back", Id = 0});
             //new UICommandInvokedHandler(gamePage.("HMMMMMMMMMM", .StatusMessage));
@@ -126,7 +132,7 @@ namespace SpeedCardGame
             var res = await dialog.ShowAsync();
             if ((int)res.Id == 0)
             {
-                System.Diagnostics.Debug.WriteLine("a");
+                this.Frame.Navigate(typeof(MainPage), null);
             }
         }
         public void moveCard(List<String> from, List<String> moveTo, String whatMoved, String whereMove)
@@ -845,7 +851,6 @@ namespace SpeedCardGame
                         {
                             //end game
                             winMsg();
-                            this.Frame.Navigate(typeof(MainPage), null);
                         }
                         else
                         {
