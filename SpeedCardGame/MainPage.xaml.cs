@@ -65,7 +65,6 @@ namespace SpeedCardGame
         }
         private void compTurn(object sender, RoutedEventArgs e)
         {
-
             this.Frame.Navigate(typeof(gamePage), null);
         }
         

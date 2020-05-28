@@ -6,6 +6,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Windows.Input;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -101,7 +102,7 @@ namespace SpeedCardGame
             var Win = false;
             foreach (Player checkWinP in players)
             {
-                if (checkWinP.cardsInDeck.Count == 1)
+                if (checkWinP.cardsInDeck.Count <= 1)
                 {
                     if (Win)
                     {
@@ -114,6 +115,19 @@ namespace SpeedCardGame
                 }
             }
             return Win;
+        }
+        public async void winMsg()
+        {
+            var winner = players[0].Name;
+            var dialog = new MessageDialog($"Player {winner} wins");
+            dialog.Commands.Add(new UICommand { Label = "back", Id = 0});
+            //new UICommandInvokedHandler(gamePage.("HMMMMMMMMMM", .StatusMessage));
+            //_ = await dialog.ShowAsync();
+            var res = await dialog.ShowAsync();
+            if ((int)res.Id == 0)
+            {
+                System.Diagnostics.Debug.WriteLine("a");
+            }
         }
         public void moveCard(List<String> from, List<String> moveTo, String whatMoved, String whereMove)
         {
@@ -229,6 +243,16 @@ namespace SpeedCardGame
                 }
                 Grid.FocusVisualSecondaryBrushProperty.Equals("#FF297837");
                 updateVisualPilesAll();
+                playerFieldPile1.Margin = baseMarginSetupCards;
+                playerFieldPile2.Margin = baseMarginSetupCards;
+                playerFieldPile3.Margin = baseMarginSetupCards;
+                playerFieldPile4.Margin = baseMarginSetupCards;
+                playerFieldPile5.Margin = baseMarginSetupCards;
+                compFieldPile1.Margin = baseMarginSetupCards;
+                compFieldPile2.Margin = baseMarginSetupCards;
+                compFieldPile3.Margin = baseMarginSetupCards;
+                compFieldPile4.Margin = baseMarginSetupCards;
+                compFieldPile5.Margin = baseMarginSetupCards;
                 gameStatus = "set Up";
             }
             else
@@ -300,7 +324,7 @@ namespace SpeedCardGame
         }
         public void roundEnd(String wonRound)
         {
-            if (gameStatus == "round Ended")
+            if (gameStatus == "round Ended")/////////////////////////////////////////////////////////////////////////////////////
             {
                 if (wonRound == players[0].Name)
                 {
@@ -351,7 +375,7 @@ namespace SpeedCardGame
                 if (players[0].cardsInDeck.Count == 0)
                 {
                     moveCard(players[1].cardsInDeck, players[1].playPile.playerPlayPile, "first", "");
-                    playerHandPileNum.Text = Convert.ToString(players[1].cardsInDeck.Count);
+                    compHandPileNum.Text = Convert.ToString(players[1].cardsInDeck.Count);
                 }
                 else if (players[1].cardsInDeck.Count == 0)
                 {
@@ -767,11 +791,11 @@ namespace SpeedCardGame
             {
                 if (checkSlap() == null)
                 {
-                    if (players[0].field.piles[players[0].field.playerSelectedFieldPile].pileCards.Count != 0)
+                    if (players[0].field.piles[players[0].field.playerSelectedFieldPile].pileCards.Count != 0 && players[Convert.ToInt32(1 - players[0].playPile.playerSelectedPlayPile)].playPile.playerPlayPile.Count != 0)
                     {
                         players[0].field.piles[players[0].field.playerSelectedFieldPile].topCard = players[0].field.piles[players[0].field.playerSelectedFieldPile].pileCards[0];
                         var topCardFieldValue = Convert.ToInt32((players[0].field.piles[players[0].field.playerSelectedFieldPile].topCard).Substring((players[0].field.piles[players[0].field.playerSelectedFieldPile].topCard).Length - 2));
-                        //                                             takes pile selected                                                    from pile choses last element (as it is the one shown)                                                                                            takes length of element shown and -2 to get a shorter string of number 0? || ??
+                        //     
                         var topCardPlayValue = Convert.ToInt32((players[Convert.ToInt32(1 - players[0].playPile.playerSelectedPlayPile)].playPile.playerPlayPile[(players[Convert.ToInt32(1 - players[0].playPile.playerSelectedPlayPile)].playPile.playerPlayPile.Count - 1)]).Substring((players[Convert.ToInt32(1 - players[0].playPile.playerSelectedPlayPile)].playPile.playerPlayPile[players[Convert.ToInt32(1 - players[0].playPile.playerSelectedPlayPile)].playPile.playerPlayPile.Count - 1].Length - 2)));
                         if ((topCardPlayValue == topCardFieldValue + 1 || topCardPlayValue == topCardFieldValue - 1) || (topCardPlayValue == 1 && topCardFieldValue == 13) || (topCardPlayValue == 13 && topCardFieldValue == 1))
                         {
@@ -779,6 +803,26 @@ namespace SpeedCardGame
                             updateVisual($"{players[0].Name}Field");
                             updateVisual($"{players[0].Name}Play");
                             updateVisual($"{players[1].Name}Play");
+                        }
+                        else
+                        {
+                            //System.Diagnostics.Debug.WriteLine("no match");
+                        }
+                        playerHandPileNum.Text = Convert.ToString(players[0].cardsInDeck.Count);
+                        compHandPileNum.Text = Convert.ToString(players[1].cardsInDeck.Count);
+                    }
+                    if (players[1].field.piles[players[1].field.playerSelectedFieldPile].pileCards.Count != 0 && players[Convert.ToInt32(1 - players[1].playPile.playerSelectedPlayPile)].playPile.playerPlayPile.Count != 0)
+                    {
+                        players[1].field.piles[players[1].field.playerSelectedFieldPile].topCard = players[1].field.piles[players[1].field.playerSelectedFieldPile].pileCards[0];
+                        var topCardFieldValue = Convert.ToInt32((players[1].field.piles[players[1].field.playerSelectedFieldPile].topCard).Substring((players[1].field.piles[players[1].field.playerSelectedFieldPile].topCard).Length - 2));
+                        //                                             takes pile selected                                                    from pile choses last element (as it is the one shown)                                                                                            takes length of element shown and -2 to get a shorter string of number 0? || ??
+                        var topCardPlayValue = Convert.ToInt32((players[Convert.ToInt32(1 - players[1].playPile.playerSelectedPlayPile)].playPile.playerPlayPile[(players[Convert.ToInt32(1 - players[1].playPile.playerSelectedPlayPile)].playPile.playerPlayPile.Count - 1)]).Substring((players[Convert.ToInt32(1 - players[1].playPile.playerSelectedPlayPile)].playPile.playerPlayPile[players[Convert.ToInt32(1 - players[1].playPile.playerSelectedPlayPile)].playPile.playerPlayPile.Count - 1].Length - 2)));
+                        if ((topCardPlayValue == topCardFieldValue + 1 || topCardPlayValue == topCardFieldValue - 1) || (topCardPlayValue == 1 && topCardFieldValue == 13) || (topCardPlayValue == 13 && topCardFieldValue == 1))
+                        {
+                            moveCard(players[1].field.piles[players[1].field.playerSelectedFieldPile].pileCards, players[Convert.ToInt32(1 - players[1].playPile.playerSelectedPlayPile)].playPile.playerPlayPile, "first", "");
+                            updateVisual($"{players[1].Name}Field");
+                            updateVisual($"{players[1].Name}Play");
+                            updateVisual($"{players[0].Name}Play");
                         }
                         else
                         {
@@ -800,6 +844,8 @@ namespace SpeedCardGame
                         if (checkWin())
                         {
                             //end game
+                            winMsg();
+                            this.Frame.Navigate(typeof(MainPage), null);
                         }
                         else
                         {
