@@ -8,24 +8,8 @@
     mc:Ignorable="d"
     Background="#FF1A6026">
 
-    <Grid >
-      
-        <Button x:Name="compPlay" Width="1000" Height="100" Background="#FFD08CD8" Grid.ColumnSpan="6" Grid.Column="2" Margin="0,343,0,0" Grid.RowSpan="2" Grid.Row="1" VerticalAlignment="Top" Click="compTurn" ></Button>
-        <Grid.RowDefinitions>
-            <RowDefinition x:Name="compSide" Height="3*"/>
-            <RowDefinition x:Name="Field" Height="5*"/>
-            <RowDefinition x:Name="playerSide" Height="5*"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="3*"/>
-            <ColumnDefinition Width="7*"/>
-            <ColumnDefinition Width="7*"/>
-            <ColumnDefinition Width="7*"/>
-            <ColumnDefinition Width="7*"/>
-            <ColumnDefinition Width="7*"/>
-            <ColumnDefinition Width="7*"/>
-            <ColumnDefinition Width="7*"/>
-            <ColumnDefinition Width="3*"/>
-        </Grid.ColumnDefinitions>
+    <Grid KeyDown="KeyPress" >
+        <Button x:Name="KeyActivatior"  Opacity="0.0001" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"   Click="spacePressed"/>
+        <Image x:Name="tutorial" Source="ms-appx:///Assets/tutorialPages/tutPg1.jpg"  VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,0" ></Image>
     </Grid>
 </Page>

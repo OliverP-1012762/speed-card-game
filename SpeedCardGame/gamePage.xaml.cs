@@ -350,9 +350,20 @@ namespace SpeedCardGame
                 }
                 else
                 {
-                    // test
-                    System.Diagnostics.Debug.WriteLine("player didn't win");
-                    //add chance to chose wrong pile for lower difficultiesS
+                    //player 2 won
+                    foreach (var cardInPlayPile in players[Convert.ToInt32(1 - players[1].playPile.playerSelectedPlayPile)].playPile.playerPlayPile)
+                    {
+                        players[1].cardsInDeck.Add(cardInPlayPile);
+                    }
+                    foreach (var cardInPlayPileC in players[players[1].playPile.playerSelectedPlayPile].playPile.playerPlayPile)
+                    {
+                        players[0].cardsInDeck.Add(cardInPlayPileC);
+                    }
+                    //clear piles on field
+                    foreach (var playersToClear in players)
+                    {
+                        playersToClear.playPile.playerPlayPile.Clear();
+                    }
                 }
                 // add cards not played in field
                 foreach (var refillDecks in players)
@@ -697,7 +708,6 @@ namespace SpeedCardGame
         {
             this.InitializeComponent();
 
-
             PlayerS1.Margin = new Thickness(70 * Convert.ToInt32(((Frame)Window.Current.Content).ActualHeight) / 1000, Convert.ToInt32(((Frame)Window.Current.Content).ActualWidth) / 1500, 0, 0);
             PlayerS2.Margin = new Thickness(0, Convert.ToInt32(((Frame)Window.Current.Content).ActualWidth) / 1500, 70 * Convert.ToInt32(((Frame)Window.Current.Content).ActualHeight) / 1000, 0);
         }
@@ -747,7 +757,7 @@ namespace SpeedCardGame
                         UpdateFieldCards("selectedPlayChanged");
                     }
                 }
-                else if (Convert.ToString(e.Key) == "Up")//////////////////////////////////////////////
+                else if (Convert.ToString(e.Key) == "Up")
                 {
                     if (players[1].playPile.playerSelectedPlayPile != 1)
                     {
@@ -845,7 +855,7 @@ namespace SpeedCardGame
                     gameStatus = "round Ended";
                     if (checkSlap() == players[0].Name)
                     {
-                        //player has no cards in hand   
+                        //player1 has no cards in hand   
                         roundEnd(players[0].Name);// cards in deck = 0
                         if (checkWin())
                         {
@@ -857,9 +867,19 @@ namespace SpeedCardGame
                             NewRound();
                         }
                     }
-                    else//comp
+                    else
                     {
-
+                        //player2 has no cards in hand   
+                        roundEnd(players[1].Name);// cards in deck = 0
+                        if (checkWin())
+                        {
+                            //end game
+                            winMsg();
+                        }
+                        else
+                        {
+                            NewRound();
+                        }
                     }
                 }
             }

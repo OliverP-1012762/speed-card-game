@@ -26,47 +26,80 @@ namespace SpeedCardGame
     public sealed partial class MainPage : Page
     {
         //global variables
-        public List<Player> players = new List<Player> { } ;
-        public Windows.UI.Xaml.Thickness baseMarginSetupCards = new Thickness(10,0,10,20);
-        public List<String> deckCards = new List<string> { };
-        Random rand = new Random();
-        public static string[] suits = { "Clubs", "Diamonds", "Hearts", "Spades" };
-        public String gameStatus = "not Running";
-        public String compStatus = "";
-
+        public int size = 5;
+        public int tutPg = 1;
         public MainPage()
         {
             this.InitializeComponent();
-            
+
+            tutorial.Width = Convert.ToInt32(Window.Current.Bounds.Width) / size;
+            tutorial.Height = Convert.ToInt32(Window.Current.Bounds.Height) / size;
+            tutorial.Source = new BitmapImage(new Uri($"ms-appx:///Assets/tutorialPages/tutPg{tutPg}.jpg"));
         }
 
-        public class Player
+        private void tutorialUpdate(String Up)
         {
-            public String Name;
-            public userField field;
-            public userPlay playPile;
-            public List<String> cardsInDeck;
+            if (Up == "previous")
+            {
+                if (tutPg > 1) {
+                    tutPg--;
+                    tutorial.Source = new BitmapImage(new Uri($"ms-appx:///Assets/tutorialPages/tutPg{tutPg}.jpg"));
+                }
+            }
+            else if (Up == "next")
+            {
+                if (tutPg < 10)
+                {
+                    tutPg++;
+                    tutorial.Source = new BitmapImage(new Uri($"ms-appx:///Assets/tutorialPages/tutPg{tutPg}.jpg"));
+                }
+
+            }
+            else if (Up == "smaller")
+            {
+                if (size > 1)
+                {
+                    size -= 1;
+                    tutorial.Width = Convert.ToInt32(Window.Current.Bounds.Width) / size;
+                    tutorial.Height = Convert.ToInt32(Window.Current.Bounds.Height) / size;
+                }
+            }
+            else if (Up == "bigger")
+            {
+                if (size < 10)
+                {
+                    size += 1;
+                    tutorial.Width = Convert.ToInt32(Window.Current.Bounds.Width) / size;
+                    tutorial.Height = Convert.ToInt32(Window.Current.Bounds.Height) / size;
+                }
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("unknown key");
+            }
         }
-        public class userPlay
+        private void KeyPress(object sender, KeyRoutedEventArgs e)
         {
-            public int playerSelectedPlayPile;
-            public List<String> playerPlayPile;
-            public String nameOfLinkedPlayPile;
+            if (Convert.ToString(e.Key) == "A"|| Convert.ToString(e.Key) == "Left")
+            {
+                this.tutorialUpdate("previous");
+            }
+            else if (Convert.ToString(e.Key) == "D"|| Convert.ToString(e.Key) == "Right")
+            {
+                this.tutorialUpdate("next");
+            }
+            else if (Convert.ToString(e.Key) == "W"||Convert.ToString(e.Key) == "Up")
+            {
+                this.tutorialUpdate("bigger");
+            }
+            else if (e.Key == Windows.System.VirtualKey.Down||e.Key == Windows.System.VirtualKey.S)
+            {
+                this.tutorialUpdate("smaller");
+            }
         }
-        public class userField{
-            public List<fieldPile> piles;
-            public int playerSelectedFieldPile;
-            public bool fieldEmpty;//needed
-        }
-        public class fieldPile{
-            public string topCard;
-            public List<string> pileCards;
-            public String nameOfLinkedPile;
-        }
-        private void compTurn(object sender, RoutedEventArgs e)
+        private void spacePressed(object sender, RoutedEventArgs e)
         {
             this.Frame.Navigate(typeof(gamePage), null);
         }
-        
     }
 }

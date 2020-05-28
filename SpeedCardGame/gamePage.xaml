@@ -25,10 +25,9 @@
         <TextBlock x:Name="compHandPileNum" Grid.Column="1"  Grid.Row="0" VerticalAlignment="Bottom"  Text="11" Foreground="LightYellow" TextAlignment="Center"/>
         <Image x:Name="playerPlayPile" Grid.Column="7" Height="250" Grid.ColumnSpan="2" Grid.RowSpan="2" Grid.Row="0" Source="ms-appx:///Assets/crdB0.jpg" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0,10,20" ></Image>
         <Image x:Name="compPlayPile" Grid.Column="4" Height="250"  Grid.ColumnSpan="2" Grid.RowSpan="2"  Grid.Row="0" Source="ms-appx:///Assets/crdB1.jpg" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0,10,20" ></Image>
-        <Button x:Name="KeyActivatior"  Opacity="0.1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"   Click="spacePressed" Grid.ColumnSpan="13" Grid.RowSpan="3" Margin="3,0,-3,0"/>
+        <Button x:Name="KeyActivatior"  Opacity="0.00011" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"   Click="spacePressed" Grid.ColumnSpan="13" Grid.RowSpan="3" Margin="3,0,-3,0"/>
         <Rectangle x:Name="PlayerS1" Fill="#FFCC00" Grid.Row="0" Grid.Column="4" Width="40" HorizontalAlignment="Left" Height="20"  Margin="70,94,0,0"/>
         <Rectangle x:Name="PlayerS2" Fill="#7F7FFF" Grid.Row="0" Grid.Column="5" Width="40" HorizontalAlignment="Right" Height="20" Margin="0,94,63,0"/>
-
         <Grid.RowDefinitions>
             <RowDefinition x:Name="compSide" Height="5*"/>
             <RowDefinition x:Name="compSide1" Height="5*"/>

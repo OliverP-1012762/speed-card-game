@@ -189,6 +189,9 @@
     <Content Include="Assets\card_backnew.png" />
     <Content Include="Assets\crdB0.jpg" />
     <Content Include="Assets\crdB1.jpg" />
+    <Content Include="Assets\tutorialPages\tutPg1.jpg" />
+    <Content Include="Assets\tutorialPages\tutPg2.jpg" />
+    <Content Include="Assets\tutorialPages\tutPg3.jpg" />
     <Content Include="Properties\Default.rd.xml" />
     <None Include="Assets\card_backnaw" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -217,6 +220,7 @@
       <Version>6.2.9</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
