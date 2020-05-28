@@ -218,8 +218,9 @@ namespace SpeedCardGame
                         playersToSetUp.field.piles.Add(pile);
                     }
                     playersToSetUp.field.playerSelectedFieldPile = 0;
-                    UpdateFieldCards("selectedFieldChanged");
-                    playersToSetUp.playPile.playerSelectedPlayPile = 1;
+                    UpdateFieldCards("selectedFieldChangedP2");
+                    UpdateFieldCards("selectedFieldChangedP1");
+                    playersToSetUp.playPile.playerSelectedPlayPile = 0;
                     UpdateFieldCards("selectedPlayChanged");
                     playersToSetUp.playPile.nameOfLinkedPlayPile = $"{playersToSetUp.Name}PlayPile";
                     playersToSetUp.field.fieldEmpty = false;
@@ -272,12 +273,24 @@ namespace SpeedCardGame
                         }
                     }
                     playersToSetUp.field.playerSelectedFieldPile = 0;
-                    UpdateFieldCards("selectedFieldChanged");
+                    UpdateFieldCards("selectedFieldChangedP2");
+                    UpdateFieldCards("selectedFieldChangedP1");
                     playersToSetUp.playPile.playerSelectedPlayPile = 1;
                     UpdateFieldCards("selectedPlayChanged");
                     playersToSetUp.field.fieldEmpty = false;
+                    playerHandPileNum.Text = Convert.ToString(playersToSetUp.cardsInDeck.Count);
                 }
                 updateVisualPilesAll();
+                playerFieldPile1.Margin = baseMarginSetupCards;
+                playerFieldPile2.Margin = baseMarginSetupCards;
+                playerFieldPile3.Margin = baseMarginSetupCards;
+                playerFieldPile4.Margin = baseMarginSetupCards;
+                playerFieldPile5.Margin = baseMarginSetupCards;
+                compFieldPile1.Margin = baseMarginSetupCards;
+                compFieldPile2.Margin = baseMarginSetupCards;
+                compFieldPile3.Margin = baseMarginSetupCards;
+                compFieldPile4.Margin = baseMarginSetupCards;
+                compFieldPile5.Margin = baseMarginSetupCards;
                 gameStatus = "set Up";
             }
             else
@@ -338,15 +351,19 @@ namespace SpeedCardGame
                 if (players[0].cardsInDeck.Count == 0)
                 {
                     moveCard(players[1].cardsInDeck, players[1].playPile.playerPlayPile, "first", "");
+                    playerHandPileNum.Text = Convert.ToString(players[1].cardsInDeck.Count);
                 }
                 else if (players[1].cardsInDeck.Count == 0)
                 {
                     moveCard(players[0].cardsInDeck, players[0].playPile.playerPlayPile, "first", "");
+                    playerHandPileNum.Text = Convert.ToString(players[0].cardsInDeck.Count);
                 }
                 else
                 {
                     moveCard(players[1].cardsInDeck, players[1].playPile.playerPlayPile, "first", "");
                     moveCard(players[0].cardsInDeck, players[0].playPile.playerPlayPile, "first", "");
+                    playerHandPileNum.Text = Convert.ToString(players[0].cardsInDeck.Count);
+                    compHandPileNum.Text = Convert.ToString(players[1].cardsInDeck.Count);
                 }
             }
             else
@@ -522,16 +539,18 @@ namespace SpeedCardGame
                                 //add special case for round win event
                                 case ("compPlayPile"):
                                     compPlayPile.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{playersToUpdate.playPile.playerPlayPile[playersToUpdate.playPile.playerPlayPile.Count - 1]}.png"));
+                                    PlayerS2.Margin = new Thickness(70 * Convert.ToInt32(((Frame)Window.Current.Content).ActualHeight) / 1000, Convert.ToInt32(((Frame)Window.Current.Content).ActualWidth) / 1500, 0, 0);
                                     break;
                                 case ("playerPlayPile"):
                                     playerPlayPile.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{playersToUpdate.playPile.playerPlayPile[playersToUpdate.playPile.playerPlayPile.Count - 1]}.png"));
+                                    PlayerS1.Margin = new Thickness(70 * Convert.ToInt32(((Frame)Window.Current.Content).ActualHeight) / 1000, Convert.ToInt32(((Frame)Window.Current.Content).ActualWidth) / 1500, 0, 0);
                                     break;
                             }
                         }
                         else
                         {
-                            compPlayPile.Source = new BitmapImage(new Uri($"ms-appx:///Assets/crdB0.png"));
-                            playerPlayPile.Source = new BitmapImage(new Uri($"ms-appx:///Assets/crdB1.png"));
+                            compPlayPile.Source = new BitmapImage(new Uri($"ms-appx:///Assets/crdB1.jpg"));
+                            playerPlayPile.Source = new BitmapImage(new Uri($"ms-appx:///Assets/crdB0.jpg"));
                         }
                     }
                 }
@@ -540,32 +559,35 @@ namespace SpeedCardGame
         public void UpdateFieldCards(String sendingOpperation)
         {
             //update selected
-            if (sendingOpperation == "selectedFieldChanged")
+            if (sendingOpperation == "selectedFieldChangedP1")
             {
                 // don't know a way to convert string to Windows.UI.Xaml.Controls.Image/ dynamic calling of images
                 if (players[0].field != null)
                 {
-                    playerFieldPile1.Margin = baseMarginSetupCards;
-                    playerFieldPile2.Margin = baseMarginSetupCards;
-                    playerFieldPile3.Margin = baseMarginSetupCards;
-                    playerFieldPile4.Margin = baseMarginSetupCards;
-                    playerFieldPile5.Margin = baseMarginSetupCards;
                     switch (players[0].field.playerSelectedFieldPile)
                     {
                         case (0):
                             playerFieldPile1.Margin = new Thickness(0);
+                            playerFieldPile2.Margin = baseMarginSetupCards;
                             break;
                         case (1):
+                            playerFieldPile1.Margin = baseMarginSetupCards;
                             playerFieldPile2.Margin = new Thickness(0);
+                            playerFieldPile3.Margin = baseMarginSetupCards;
                             break;
                         case (2):
                             playerFieldPile3.Margin = new Thickness(0);
+                            playerFieldPile2.Margin = baseMarginSetupCards;
+                            playerFieldPile4.Margin = baseMarginSetupCards;
                             break;
-                        case (3):
+                        case (3):   
                             playerFieldPile4.Margin = new Thickness(0);
+                            playerFieldPile3.Margin = baseMarginSetupCards;
+                            playerFieldPile5.Margin = baseMarginSetupCards;
                             break;
                         case (4):
                             playerFieldPile5.Margin = new Thickness(0);
+                            playerFieldPile4.Margin = baseMarginSetupCards;
                             break;
                     }
 
@@ -573,18 +595,67 @@ namespace SpeedCardGame
 
                 //MainPage.((stack.nameOfLinkedPile).To).Margin = new Thickness(0, 0, 0, 0);
             }
+            else if (sendingOpperation == "selectedFieldChangedP2")
+            {
+                    // don't know a way to convert string to Windows.UI.Xaml.Controls.Image/ dynamic calling of images
+                    if (players[1].field != null)
+                    {
+                    switch (players[1].field.playerSelectedFieldPile)
+                    {
+                        case (0):
+                            compFieldPile1.Margin = new Thickness(0);
+                            compFieldPile2.Margin = baseMarginSetupCards;
+                            break;
+                        case (1):
+                            compFieldPile1.Margin = baseMarginSetupCards;
+                            compFieldPile2.Margin = new Thickness(0);
+                            compFieldPile3.Margin = baseMarginSetupCards;
+                            break;
+                        case (2):
+                            compFieldPile3.Margin = new Thickness(0);
+                            compFieldPile2.Margin = baseMarginSetupCards;
+                            compFieldPile4.Margin = baseMarginSetupCards;
+                            break;
+                        case (3):
+                            compFieldPile4.Margin = new Thickness(0);
+                            compFieldPile3.Margin = baseMarginSetupCards;
+                            compFieldPile5.Margin = baseMarginSetupCards;
+                            break;
+                        case (4):
+                            compFieldPile5.Margin = new Thickness(0);
+                            compFieldPile4.Margin = baseMarginSetupCards;
+                            break;
+                    }
+
+                    //MainPage.((stack.nameOfLinkedPile).To).Margin = new Thickness(0, 0, 0, 0);
+                }
+            }
             if (sendingOpperation == "selectedPlayChanged")
             {
                 switch (players[0].playPile.playerSelectedPlayPile)
                 {
                     case (0):
-                        playerPlayPile.Margin = baseMarginSetupCards;
-                        compPlayPile.Margin = new Thickness(0);
+                        Grid.SetColumn(PlayerS1, 4);
+                        PlayerS1.Margin = new Thickness(70*Convert.ToInt32(((Frame)Window.Current.Content).ActualHeight)/1000, Convert.ToInt32(((Frame)Window.Current.Content).ActualWidth) / 1500, 0,0);
                         break;
                     case (1):
-                        compPlayPile.Margin = baseMarginSetupCards;
-                        playerPlayPile.Margin = new Thickness(0);
+                        Grid.SetColumn(PlayerS1, 7);
+                        PlayerS1.Margin = new Thickness(70 * Convert.ToInt32(((Frame)Window.Current.Content).ActualHeight) / 1000, Convert.ToInt32(((Frame)Window.Current.Content).ActualWidth) / 1500, 0, 0);
                         break;
+                }
+                if (players[1].playPile != null)
+                {
+                    switch (players[1].playPile.playerSelectedPlayPile)
+                    {
+                        case (0):
+                            Grid.SetColumn(PlayerS2, 5);
+                            PlayerS2.Margin = new Thickness(0,Convert.ToInt32(((Frame)Window.Current.Content).ActualWidth) / 1500, 70 * Convert.ToInt32(((Frame)Window.Current.Content).ActualHeight) / 1000, 0);
+                            break;
+                        case (1):
+                            Grid.SetColumn(PlayerS2, 8);
+                            PlayerS2.Margin = new Thickness(0, Convert.ToInt32(((Frame)Window.Current.Content).ActualWidth) / 1500, 70 * Convert.ToInt32(((Frame)Window.Current.Content).ActualHeight) / 1000, 0);
+                            break;
+                    }
                 }
             }
 
@@ -595,6 +666,10 @@ namespace SpeedCardGame
         public gamePage()
         {
             this.InitializeComponent();
+
+
+            PlayerS1.Margin = new Thickness(70 * Convert.ToInt32(((Frame)Window.Current.Content).ActualHeight) / 1000, Convert.ToInt32(((Frame)Window.Current.Content).ActualWidth) / 1500, 0, 0);
+            PlayerS2.Margin = new Thickness(0, Convert.ToInt32(((Frame)Window.Current.Content).ActualWidth) / 1500, 70 * Convert.ToInt32(((Frame)Window.Current.Content).ActualHeight) / 1000, 0);
         }
         private void KeyPressed(object sender, KeyRoutedEventArgs e)
         {
@@ -607,7 +682,7 @@ namespace SpeedCardGame
                     if (players[0].field.playerSelectedFieldPile != 0)
                     {
                         players[0].field.playerSelectedFieldPile--;
-                        UpdateFieldCards("selectedFieldChanged");
+                        UpdateFieldCards("selectedFieldChangedP1");
                     }
                 }
                 else if (Convert.ToString(e.Key) == "Left")//djfkdsjfdsjfjdsklfjsdklfjsdklfjsdkljfklsdjfkls
@@ -615,7 +690,7 @@ namespace SpeedCardGame
                     if (players[1].field.playerSelectedFieldPile != 0)
                     {
                         players[1].field.playerSelectedFieldPile--;
-                        UpdateFieldCards("selectedFieldChanged");
+                        UpdateFieldCards("selectedFieldChangedP2");
                     }
                 }
                 else if (Convert.ToString(e.Key) == "Right")
@@ -623,7 +698,7 @@ namespace SpeedCardGame
                     if (players[1].field.playerSelectedFieldPile != 4)
                     {
                         players[1].field.playerSelectedFieldPile++;
-                        UpdateFieldCards("selectedFieldChanged");
+                        UpdateFieldCards("selectedFieldChangedP2");
                     }
                 }
                 else if (Convert.ToString(e.Key) == "D" )
@@ -631,7 +706,7 @@ namespace SpeedCardGame
                     if (players[0].field.playerSelectedFieldPile != 4)
                     {
                         players[0].field.playerSelectedFieldPile++;
-                        UpdateFieldCards("selectedFieldChanged");
+                        UpdateFieldCards("selectedFieldChangedP1");
                     }
                 }
                 else if (Convert.ToString(e.Key) == "W")
@@ -709,6 +784,9 @@ namespace SpeedCardGame
                         {
                             //System.Diagnostics.Debug.WriteLine("no match");
                         }
+
+                        playerHandPileNum.Text = Convert.ToString(players[0].cardsInDeck.Count);
+                        compHandPileNum.Text = Convert.ToString(players[1].cardsInDeck.Count);
                     }
                 }
                 else
