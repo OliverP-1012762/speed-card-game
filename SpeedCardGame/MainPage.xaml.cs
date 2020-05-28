@@ -26,7 +26,7 @@ namespace SpeedCardGame
     public sealed partial class MainPage : Page
     {
         //global variables
-        public int size = 5;
+        public int size = 2;
         public int tutPg = 1;
         public MainPage()
         {

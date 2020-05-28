@@ -190,8 +190,15 @@
     <Content Include="Assets\crdB0.jpg" />
     <Content Include="Assets\crdB1.jpg" />
     <Content Include="Assets\tutorialPages\tutPg1.jpg" />
+    <Content Include="Assets\tutorialPages\tutPg10.jpg" />
     <Content Include="Assets\tutorialPages\tutPg2.jpg" />
     <Content Include="Assets\tutorialPages\tutPg3.jpg" />
+    <Content Include="Assets\tutorialPages\tutPg4.jpg" />
+    <Content Include="Assets\tutorialPages\tutPg5.jpg" />
+    <Content Include="Assets\tutorialPages\tutPg6.jpg" />
+    <Content Include="Assets\tutorialPages\tutPg7.jpg" />
+    <Content Include="Assets\tutorialPages\tutPg8.jpg" />
+    <Content Include="Assets\tutorialPages\tutPg9.jpg" />
     <Content Include="Properties\Default.rd.xml" />
     <None Include="Assets\card_backnaw" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
