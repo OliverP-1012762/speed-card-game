@@ -41,6 +41,7 @@ namespace SpeedCardGame
         {
             if (Up == "previous")
             {
+                // previous tutorial panel
                 if (tutPg > 1) {
                     tutPg--;
                     tutorial.Source = new BitmapImage(new Uri($"ms-appx:///Assets/tutorialPages/tutPg{tutPg}.jpg"));
@@ -48,6 +49,7 @@ namespace SpeedCardGame
             }
             else if (Up == "next")
             {
+                // next tutorial panel
                 if (tutPg < 10)
                 {
                     tutPg++;
@@ -57,6 +59,7 @@ namespace SpeedCardGame
             }
             else if (Up == "smaller")
             {
+                // change size down of tutorial
                 if (size > 1)
                 {
                     size -= 1;
@@ -66,6 +69,7 @@ namespace SpeedCardGame
             }
             else if (Up == "bigger")
             {
+                // change size up of tutorial
                 if (size < 10)
                 {
                     size += 1;
@@ -75,11 +79,12 @@ namespace SpeedCardGame
             }
             else
             {
-                System.Diagnostics.Debug.WriteLine("unknown key");
+                //System.Diagnostics.Debug.WriteLine("unknown key");
             }
         }
         private void KeyPress(object sender, KeyRoutedEventArgs e)
         {
+            //inputs key down values and sends to corresponding function for tutorial image changes
             if (Convert.ToString(e.Key) == "A"|| Convert.ToString(e.Key) == "Left")
             {
                 this.tutorialUpdate("previous");
@@ -99,6 +104,7 @@ namespace SpeedCardGame
         }
         private void spacePressed(object sender, RoutedEventArgs e)
         {
+            //goes to game
             this.Frame.Navigate(typeof(gamePage), null);
         }
     }

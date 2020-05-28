@@ -16,13 +16,9 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
 namespace SpeedCardGame
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class gamePage : Page
     {
         //global variables
@@ -35,6 +31,8 @@ namespace SpeedCardGame
         public String compStatus = "";
         public int page = 1;
 
+
+        //classes to help define each section allocated to player
         public class Card
         {
             public String Name;
@@ -57,7 +55,7 @@ namespace SpeedCardGame
         {
             public List<fieldPile> piles;
             public int playerSelectedFieldPile;
-            public bool fieldEmpty;//needed
+            public bool fieldEmpty;
         }
         public class fieldPile
         {
@@ -67,6 +65,7 @@ namespace SpeedCardGame
         }
         public List<String> shuffle(List<String> inList)
         {
+            //inputs a list and randomly adds to another list and outputs that 
             List<String> outList = new List<String> { };
             while (inList.Count > 0)
             {
@@ -78,6 +77,7 @@ namespace SpeedCardGame
         }
         public String checkSlap()
         {
+            //checks whose field is empty and returns their name or if nobody has an empty field
             String oneFieldEmpty = null;
             foreach (var UsersToCheckField in players)
             {
@@ -98,6 +98,7 @@ namespace SpeedCardGame
         }
         public bool checkWin()
         {
+            //checks if a player has won because they end the round with less than 1 card
             var Win = false;
             foreach (Player checkWinP in players)
             {
@@ -117,6 +118,7 @@ namespace SpeedCardGame
         }
         public async void winMsg()
         {
+            //adds a diolouge box for ending the game and sends them back to home screne
             var winner = "no one";
             if (players[0].cardsInDeck.Count <= 1) {
                 winner = "1";
@@ -127,8 +129,6 @@ namespace SpeedCardGame
             }
             var dialog = new MessageDialog($"Player {winner} wins");
             dialog.Commands.Add(new UICommand { Label = "back", Id = 0});
-            //new UICommandInvokedHandler(gamePage.("HMMMMMMMMMM", .StatusMessage));
-            //_ = await dialog.ShowAsync();
             var res = await dialog.ShowAsync();
             if ((int)res.Id == 0)
             {
@@ -137,6 +137,7 @@ namespace SpeedCardGame
         }
         public void moveCard(List<String> from, List<String> moveTo, String whatMoved, String whereMove)
         {
+            //useless function that I thought I needed
             if (whereMove == "")
             {
                 if (whatMoved == "random")
@@ -218,12 +219,12 @@ namespace SpeedCardGame
                     playersToSetUp.cardsInDeck = new List<string> { };
                     playersToSetUp.playPile = new userPlay();
 
-
-                    //basic intialisation of class add more when random cards in deck implimetnted
+                    //basic intialisation of class 
                     for (int dealCard = Convert.ToInt32(Math.Floor(Convert.ToDecimal(CardsToEachPlayer))); dealCard > 0; dealCard--)
                     {
                         moveCard(deckCards, playersToSetUp.cardsInDeck, "random", "");
                     }
+                    //divides up the field piles with cards of 1,2,3,4,5
                     playersToSetUp.field.piles = new List<fieldPile> { };
                     for (int i = 1; i < 6; i++)
                     {
@@ -237,6 +238,7 @@ namespace SpeedCardGame
                         pile.nameOfLinkedPile = $"{playersToSetUp.Name}FieldPile{i}";
                         playersToSetUp.field.piles.Add(pile);
                     }
+                    //sets players selections
                     playersToSetUp.field.playerSelectedFieldPile = 0;
                     UpdateFieldCards("selectedFieldChangedP2");
                     UpdateFieldCards("selectedFieldChangedP1");
@@ -245,8 +247,8 @@ namespace SpeedCardGame
                     playersToSetUp.playPile.nameOfLinkedPlayPile = $"{playersToSetUp.Name}PlayPile";
                     playersToSetUp.field.fieldEmpty = false;
                     playersToSetUp.playPile.playerPlayPile = new List<String> { };
-                    //move to round start moveCard(playersToSetUp.cardsInDeck, playersToSetUp.playPile.playerPlayPile, "first","");
                 }
+                //updating the basic game visuals
                 Grid.FocusVisualSecondaryBrushProperty.Equals("#FF297837");
                 updateVisualPilesAll();
                 playerFieldPile1.Margin = baseMarginSetupCards;
@@ -266,16 +268,17 @@ namespace SpeedCardGame
                 System.Diagnostics.Debug.WriteLine("Round running can't reset");
             }
         }
-        public void NewRound()
+        public void NewRound()// like setUpGame but more robust 
         {
             //from roundEnd
             if (gameStatus == "round end")
             {
                 foreach (var playersToSetUp in players)
                 {
-                    //reset players field
+                    //reset players field and reinitialises 
                     if (playersToSetUp.cardsInDeck.Count >= 15)
                     {
+                        //normal way
                         for (int i = 0; i <= 4; i++)
                         {
                             for (int j = i + 1; j > 0; j--)
@@ -287,6 +290,7 @@ namespace SpeedCardGame
                     }
                     else
                     {
+                        //winning round way
                         int pileToAdd = 0;
                         while (playersToSetUp.cardsInDeck.Count != 0)
                         {
@@ -302,6 +306,7 @@ namespace SpeedCardGame
                             pileToAdd++;
                         }
                     }
+                    //resests players selections
                     playersToSetUp.field.playerSelectedFieldPile = 0;
                     UpdateFieldCards("selectedFieldChangedP2");
                     UpdateFieldCards("selectedFieldChangedP1");
@@ -310,6 +315,7 @@ namespace SpeedCardGame
                     playersToSetUp.field.fieldEmpty = false;
                     playerHandPileNum.Text = Convert.ToString(playersToSetUp.cardsInDeck.Count);
                 }
+                //updating the basic game visuals
                 updateVisualPilesAll();
                 playerFieldPile1.Margin = baseMarginSetupCards;
                 playerFieldPile2.Margin = baseMarginSetupCards;
@@ -330,14 +336,16 @@ namespace SpeedCardGame
         }
         public void roundEnd(String wonRound)
         {
-            if (gameStatus == "round Ended")/////////////////////////////////////////////////////////////////////////////////////
+            if (gameStatus == "round Ended")
             {
                 if (wonRound == players[0].Name)
                 {
+                    //gets the winning players pile they slaped and adds it to their pile
                     foreach (var cardInPlayPile in players[Convert.ToInt32(1 - players[0].playPile.playerSelectedPlayPile)].playPile.playerPlayPile)
                     {
                         players[0].cardsInDeck.Add(cardInPlayPile);
                     }
+                    //gets the winnning players pile they didn't slap and adds it to the other player
                     foreach (var cardInPlayPileC in players[players[0].playPile.playerSelectedPlayPile].playPile.playerPlayPile)
                     {
                         players[1].cardsInDeck.Add(cardInPlayPileC);
@@ -351,10 +359,12 @@ namespace SpeedCardGame
                 else
                 {
                     //player 2 won
+                    //gets the winning players pile they slaped and adds it to their pile
                     foreach (var cardInPlayPile in players[Convert.ToInt32(1 - players[1].playPile.playerSelectedPlayPile)].playPile.playerPlayPile)
                     {
                         players[1].cardsInDeck.Add(cardInPlayPile);
                     }
+                    //gets the winnning players pile they didn't slap and adds it to the other player
                     foreach (var cardInPlayPileC in players[players[1].playPile.playerSelectedPlayPile].playPile.playerPlayPile)
                     {
                         players[0].cardsInDeck.Add(cardInPlayPileC);
@@ -365,7 +375,7 @@ namespace SpeedCardGame
                         playersToClear.playPile.playerPlayPile.Clear();
                     }
                 }
-                // add cards not played in field
+                // add cards not played in field back into the platyers deck
                 foreach (var refillDecks in players)
                 {
                     foreach (var fields in refillDecks.field.piles)
@@ -376,7 +386,6 @@ namespace SpeedCardGame
                         }
                         fields.pileCards.Clear();
                     }
-                    //shuffle(refillDecks.cardsInDeck);
                 }
             }
             else
@@ -387,20 +396,24 @@ namespace SpeedCardGame
         }
         public void flipPP()
         {
+            //checks if the players decks have enough cards otherwise the game ties and restarts
             if (players[0].cardsInDeck.Count != 0 || players[1].cardsInDeck.Count != 0)
             {
                 if (players[0].cardsInDeck.Count == 0)
                 {
+                    //only player2 has cards in their deck so that is flipped
                     moveCard(players[1].cardsInDeck, players[1].playPile.playerPlayPile, "first", "");
                     compHandPileNum.Text = Convert.ToString(players[1].cardsInDeck.Count);
                 }
                 else if (players[1].cardsInDeck.Count == 0)
                 {
+                    //only player1 has cards in their deck so that is flipped
                     moveCard(players[0].cardsInDeck, players[0].playPile.playerPlayPile, "first", "");
                     playerHandPileNum.Text = Convert.ToString(players[0].cardsInDeck.Count);
                 }
                 else
                 {
+                    //flipps top card of deck to play pile for new plays
                     moveCard(players[1].cardsInDeck, players[1].playPile.playerPlayPile, "first", "");
                     moveCard(players[0].cardsInDeck, players[0].playPile.playerPlayPile, "first", "");
                     playerHandPileNum.Text = Convert.ToString(players[0].cardsInDeck.Count);
@@ -415,17 +428,15 @@ namespace SpeedCardGame
             }
             updateVisual($"{players[0].Name}Play");
             updateVisual($"{players[1].Name}Play");
-            //System.Diagnostics.Debug.WriteLine(players[0].cardsInDeck.Count + ":Pd " + players[1].cardsInDeck.Count + ":Cd ");
-            if (false)//visual representation of pile having no cards
-            { }
         }
-        public void updateVisual(String elementToUpdate)
+        public void updateVisual(String elementToUpdate)//like update visual piles all but faster for cleaner gameplay
         {
             switch (elementToUpdate)
             {
                 case ("playerField"):
                     foreach (var set in players[0].field.piles)
                     {
+                        //checks if there are any cards left in the piles
                         if (set.pileCards.Count != 0)
                         {
                             set.topCard = set.pileCards[0];
@@ -438,6 +449,7 @@ namespace SpeedCardGame
                         {
                             //don't know how to dynamicaly call elements
                             // don't know a way to convert string to Windows.UI.Xaml.Controls.Image/ dynamic calling of images
+                            //updates the top cards of the piles 
                             case ("playerFieldPile1"):
                                 playerFieldPile1.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
                                 break;
@@ -459,6 +471,7 @@ namespace SpeedCardGame
                 case ("playerPlay"):
                     if (players[0].playPile != null)
                     {
+                        //updates the top cards of the play piles 
                         if (players[0].playPile.playerPlayPile != null && players[0].playPile.playerPlayPile.Count != 0)
                         {
                             playerPlayPile.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{players[0].playPile.playerPlayPile[players[0].playPile.playerPlayPile.Count - 1]}.png"));
@@ -468,6 +481,7 @@ namespace SpeedCardGame
                 case ("compField"):
                     foreach (var set in players[1].field.piles)
                     {
+                        //like player 1
                         if (set.pileCards.Count != 0)
                         {
                             set.topCard = set.pileCards[0];
@@ -497,6 +511,7 @@ namespace SpeedCardGame
                     }
                     break;
                 case ("compPlay"):
+                    //updates the top cards of the play piles 
                     if (players[1].playPile != null)
                     {
                         if (players[1].playPile.playerPlayPile != null && players[1].playPile.playerPlayPile.Count != 0)
@@ -515,7 +530,7 @@ namespace SpeedCardGame
         {
             foreach (var playersToUpdate in players)
             {
-                //field piles
+                //field piles update visuals
                 if (playersToUpdate.field != null)
                 {
                     if (playersToUpdate.field.piles != null)
@@ -532,8 +547,6 @@ namespace SpeedCardGame
                             }
                             switch (set.nameOfLinkedPile)
                             {
-                                //don't know how to dynamicaly call elements
-                                // don't know a way to convert string to Windows.UI.Xaml.Controls.Image/ dynamic calling of images
                                 case ("playerFieldPile1"):
                                     playerFieldPile1.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{set.topCard}.png"));
                                     break;
@@ -568,7 +581,7 @@ namespace SpeedCardGame
                         }
                     }
                 }
-                //play piles
+                //play piles update visuals and sizing 
                 if (playersToUpdate.playPile != null)
                 {
                     if (playersToUpdate.playPile.playerPlayPile != null)
@@ -577,7 +590,6 @@ namespace SpeedCardGame
                         {
                             switch (playersToUpdate.playPile.nameOfLinkedPlayPile)
                             {
-                                //add special case for round win event
                                 case ("compPlayPile"):
                                     compPlayPile.Source = new BitmapImage(new Uri($"ms-appx:///Assets/Cards/{playersToUpdate.playPile.playerPlayPile[playersToUpdate.playPile.playerPlayPile.Count - 1]}.png"));
                                     PlayerS2.Margin = new Thickness(70 * Convert.ToInt32(((Frame)Window.Current.Content).ActualHeight) / 1000, Convert.ToInt32(((Frame)Window.Current.Content).ActualWidth) / 1500, 0, 0);
@@ -599,14 +611,14 @@ namespace SpeedCardGame
         }
         public void UpdateFieldCards(String sendingOpperation)
         {
-            //update selected
+            //update selected field 
             if (sendingOpperation == "selectedFieldChangedP1")
             {
-                // don't know a way to convert string to Windows.UI.Xaml.Controls.Image/ dynamic calling of images
                 if (players[0].field != null)
                 {
                     switch (players[0].field.playerSelectedFieldPile)
                     {
+                        //changing margin changes appeared size compared to others
                         case (0):
                             playerFieldPile1.Margin = new Thickness(0);
                             playerFieldPile2.Margin = baseMarginSetupCards;
@@ -631,14 +643,10 @@ namespace SpeedCardGame
                             playerFieldPile4.Margin = baseMarginSetupCards;
                             break;
                     }
-
                 }
-
-                //MainPage.((stack.nameOfLinkedPile).To).Margin = new Thickness(0, 0, 0, 0);
             }
             else if (sendingOpperation == "selectedFieldChangedP2")
             {
-                    // don't know a way to convert string to Windows.UI.Xaml.Controls.Image/ dynamic calling of images
                     if (players[1].field != null)
                     {
                     switch (players[1].field.playerSelectedFieldPile)
@@ -667,12 +675,11 @@ namespace SpeedCardGame
                             compFieldPile4.Margin = baseMarginSetupCards;
                             break;
                     }
-
-                    //MainPage.((stack.nameOfLinkedPile).To).Margin = new Thickness(0, 0, 0, 0);
                 }
             }
             if (sendingOpperation == "selectedPlayChanged")
             {
+                //play pile selection rectangles update
                 switch (players[0].playPile.playerSelectedPlayPile)
                 {
                     case (0):
@@ -699,10 +706,6 @@ namespace SpeedCardGame
                     }
                 }
             }
-
-            //update card placed
-
-            //update top card
         }
         public gamePage()
         {
@@ -713,22 +716,23 @@ namespace SpeedCardGame
         }
         private void KeyPressed(object sender, KeyRoutedEventArgs e)
         {
-            //System.Diagnostics.Debug.WriteLine(e.Key);
-            //System.Diagnostics.Debug.WriteLine(sender);
+            // gets the key pressed and checks what it was if the game is going
             if (gameStatus != "not Running")
             {
                 if (Convert.ToString(e.Key) == "A")
                 {
                     if (players[0].field.playerSelectedFieldPile != 0)
                     {
+                        //moves player 1 selected field
                         players[0].field.playerSelectedFieldPile--;
                         UpdateFieldCards("selectedFieldChangedP1");
                     }
                 }
-                else if (Convert.ToString(e.Key) == "Left")//djfkdsjfdsjfjdsklfjsdklfjsdklfjsdkljfklsdjfkls
+                else if (Convert.ToString(e.Key) == "Left")
                 {
                     if (players[1].field.playerSelectedFieldPile != 0)
                     {
+                        //moves player 2 selected field
                         players[1].field.playerSelectedFieldPile--;
                         UpdateFieldCards("selectedFieldChangedP2");
                     }
@@ -737,6 +741,7 @@ namespace SpeedCardGame
                 {
                     if (players[1].field.playerSelectedFieldPile != 4)
                     {
+                        //moves player 2 selected field
                         players[1].field.playerSelectedFieldPile++;
                         UpdateFieldCards("selectedFieldChangedP2");
                     }
@@ -745,6 +750,7 @@ namespace SpeedCardGame
                 {
                     if (players[0].field.playerSelectedFieldPile != 4)
                     {
+                        //moves player 1 selected field
                         players[0].field.playerSelectedFieldPile++;
                         UpdateFieldCards("selectedFieldChangedP1");
                     }
@@ -753,6 +759,7 @@ namespace SpeedCardGame
                 {
                     if (players[0].playPile.playerSelectedPlayPile != 1)
                     {
+                        //moves player 1 selected play pile
                         players[0].playPile.playerSelectedPlayPile++;
                         UpdateFieldCards("selectedPlayChanged");
                     }
@@ -761,6 +768,7 @@ namespace SpeedCardGame
                 {
                     if (players[1].playPile.playerSelectedPlayPile != 1)
                     {
+                        //moves player 2 selected play pile
                         players[1].playPile.playerSelectedPlayPile++;
                         UpdateFieldCards("selectedPlayChanged");
                     }
@@ -769,6 +777,7 @@ namespace SpeedCardGame
                 {
                     if (players[1].playPile.playerSelectedPlayPile != 0)
                     {
+                        //moves player 2 selected play pile
                         players[1].playPile.playerSelectedPlayPile--;
                         UpdateFieldCards("selectedPlayChanged");
                     }
@@ -777,12 +786,14 @@ namespace SpeedCardGame
                 {
                     if (players[0].playPile.playerSelectedPlayPile != 0)
                     {
+                        //moves player 1 selected play pile
                         players[0].playPile.playerSelectedPlayPile--;
                         UpdateFieldCards("selectedPlayChanged");
                     }
                 }
                 else if (e.Key == Windows.System.VirtualKey.N)
                 {
+                    //flips over deck cards to play pile
                     if (gameStatus != "set Up")
                     {
                         flipPP();
@@ -792,8 +803,10 @@ namespace SpeedCardGame
         }
         private void spacePressed(object sender, RoutedEventArgs e)
         {
+            //using a button when space is pressed 
             if (gameStatus == "not Running")
             {
+                //starts game
                 setUpGame();
             }
             //activates game
@@ -809,12 +822,16 @@ namespace SpeedCardGame
                 {
                     if (players[0].field.piles[players[0].field.playerSelectedFieldPile].pileCards.Count != 0 && players[Convert.ToInt32(1 - players[0].playPile.playerSelectedPlayPile)].playPile.playerPlayPile.Count != 0)
                     {
+                        //set top card of selected pile
                         players[0].field.piles[players[0].field.playerSelectedFieldPile].topCard = players[0].field.piles[players[0].field.playerSelectedFieldPile].pileCards[0];
+                        //gets value of top card
                         var topCardFieldValue = Convert.ToInt32((players[0].field.piles[players[0].field.playerSelectedFieldPile].topCard).Substring((players[0].field.piles[players[0].field.playerSelectedFieldPile].topCard).Length - 2));
                         //     
                         var topCardPlayValue = Convert.ToInt32((players[Convert.ToInt32(1 - players[0].playPile.playerSelectedPlayPile)].playPile.playerPlayPile[(players[Convert.ToInt32(1 - players[0].playPile.playerSelectedPlayPile)].playPile.playerPlayPile.Count - 1)]).Substring((players[Convert.ToInt32(1 - players[0].playPile.playerSelectedPlayPile)].playPile.playerPlayPile[players[Convert.ToInt32(1 - players[0].playPile.playerSelectedPlayPile)].playPile.playerPlayPile.Count - 1].Length - 2)));
+                        //compares if top card of selected field and play pile are 1 higher or 1 lower than each other
                         if ((topCardPlayValue == topCardFieldValue + 1 || topCardPlayValue == topCardFieldValue - 1) || (topCardPlayValue == 1 && topCardFieldValue == 13) || (topCardPlayValue == 13 && topCardFieldValue == 1))
                         {
+                            //plays card onto field if 1HoL
                             moveCard(players[0].field.piles[players[0].field.playerSelectedFieldPile].pileCards, players[Convert.ToInt32(1 - players[0].playPile.playerSelectedPlayPile)].playPile.playerPlayPile, "first", "");
                             updateVisual($"{players[0].Name}Field");
                             updateVisual($"{players[0].Name}Play");
@@ -827,6 +844,7 @@ namespace SpeedCardGame
                         playerHandPileNum.Text = Convert.ToString(players[0].cardsInDeck.Count);
                         compHandPileNum.Text = Convert.ToString(players[1].cardsInDeck.Count);
                     }
+                    //same thing as above but now for Player 2
                     if (players[1].field.piles[players[1].field.playerSelectedFieldPile].pileCards.Count != 0 && players[Convert.ToInt32(1 - players[1].playPile.playerSelectedPlayPile)].playPile.playerPlayPile.Count != 0)
                     {
                         players[1].field.piles[players[1].field.playerSelectedFieldPile].topCard = players[1].field.piles[players[1].field.playerSelectedFieldPile].pileCards[0];
@@ -852,28 +870,32 @@ namespace SpeedCardGame
                 else
                 {
                     //snap 
+                    //if one player has run out of cards the round ends and a new round starts
                     gameStatus = "round Ended";
                     if (checkSlap() == players[0].Name)
                     {
-                        //player1 has no cards in hand   
-                        roundEnd(players[0].Name);// cards in deck = 0
+                        //player 1 has no cards in hand so
+                        //redistributes cards with player 1 selection
+                        roundEnd(players[0].Name);
                         if (checkWin())
                         {
-                            //end game
+                            //end game with player 1 winning
                             winMsg();
                         }
                         else
                         {
+                            //restart round
                             NewRound();
                         }
                     }
                     else
                     {
-                        //player2 has no cards in hand   
-                        roundEnd(players[1].Name);// cards in deck = 0
+                        //player2 has no cards in hand so
+                        //redistributes cards with player 2 selection
+                        roundEnd(players[1].Name);
                         if (checkWin())
                         {
-                            //end game
+                            //end game with player 2 winning
                             winMsg();
                         }
                         else
